@@ -16,7 +16,7 @@ import { DashboardPage } from './pages/DashboardPage';
 const ProgressPage = React.lazy(() => import('./pages/ProgressPage'));
 const ComparePage = React.lazy(() => import('./pages/ComparePage'));
 const LeaderboardPage = React.lazy(() => import('./pages/LeaderboardPage'));
-const NotificationsPage = React.lazy(() => import('./pages/NotificationsPage'));
+const GoalsPage = React.lazy(() => import('./pages/GoalsPage'));
 const SettingsPage = React.lazy(() => import('./pages/SettingsPage'));
 
 // Protected Route Component
@@ -130,12 +130,12 @@ const App: React.FC = () => {
         />
         
         <Route
-          path="/notifications"
+          path="/goals"
           element={
             <ProtectedRoute>
               <Layout>
                 <React.Suspense fallback={<PageLoading />}>
-                  <NotificationsPage />
+                  <GoalsPage />
                 </React.Suspense>
               </Layout>
             </ProtectedRoute>

@@ -1,41 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Target, 
+import {
+  BarChart3,
+  TrendingUp,
+  Target,
   Calendar,
   Plus,
   Trophy,
   Users,
-  Activity
+  Activity,
+  Dumbbell,
+  Heart,
+  Flame
 } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Card, Button, Badge, LoadingSpinner } from '../components/UI';
 import { useAuthStore } from '../stores/authStore';
-import { useAppStore } from '../stores/appStore';
-import { progressApi, settingsApi } from '../services/api';
-import { Progress, Metrics } from '../types';
-import { format, subDays, startOfWeek, endOfWeek } from 'date-fns';
+import { progressApi } from '../services/api';
+import { Progress } from '../types';
+import { format, subDays, startOfWeek, endOfWeek, parseISO } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuthStore();
-  const { 
-    progress, 
-    setProgress, 
-    isLoadingProgress, 
-    setProgressLoading,
-    metrics,
-    setMetrics,
-    isLoadingMetrics,
-    setMetricsLoading
-  } = useAppStore();
-
+  const [allProgress, setAllProgress] = useState<Progress[]>([]);
   const [recentProgress, setRecentProgress] = useState<Progress[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [weeklyStats, setWeeklyStats] = useState({
     entries: 0,
     categories: new Set<string>(),
     avgValue: 0,
   });
+  const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -47,30 +42,25 @@ export const DashboardPage: React.FC = () => {
     if (!user) return;
 
     try {
-      setProgressLoading(true);
-      setMetricsLoading(true);
+      setIsLoading(true);
 
       // Load user progress
-      const userProgress = await progressApi.getUserProgress(user.id, 10, 0);
-      setProgress(userProgress);
+      const userProgress = await progressApi.getAll(user.id);
+      setAllProgress(userProgress);
       setRecentProgress(userProgress.slice(0, 5));
-
-      // Load metrics
-      const appMetrics = await settingsApi.getMetrics();
-      setMetrics(appMetrics);
 
       // Calculate weekly stats
       const weekStart = startOfWeek(new Date());
       const weekEnd = endOfWeek(new Date());
-      
+
       const weeklyEntries = userProgress.filter(p => {
         const entryDate = new Date(p.date);
         return entryDate >= weekStart && entryDate <= weekEnd;
       });
 
       const categories = new Set(weeklyEntries.map(p => p.category));
-      const avgValue = weeklyEntries.length > 0 
-        ? weeklyEntries.reduce((sum, p) => sum + p.value, 0) / weeklyEntries.length 
+      const avgValue = weeklyEntries.length > 0
+        ? weeklyEntries.reduce((sum, p) => sum + p.value, 0) / weeklyEntries.length
         : 0;
 
       setWeeklyStats({
@@ -79,30 +69,46 @@ export const DashboardPage: React.FC = () => {
         avgValue,
       });
 
+      // Prepare chart data (last 7 days)
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(new Date(), 6 - i);
+        const dateStr = format(date, 'yyyy-MM-dd');
+        const dayEntries = userProgress.filter(p => p.date === dateStr);
+
+        return {
+          date: format(date, 'MMM dd'),
+          entries: dayEntries.length,
+          totalValue: dayEntries.reduce((sum, p) => sum + p.value, 0),
+        };
+      });
+
+      setChartData(last7Days);
+
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
-      setProgressLoading(false);
-      setMetricsLoading(false);
+      setIsLoading(false);
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'fitness': return <Activity className="w-5 h-5" />;
-      case 'health': return <TrendingUp className="w-5 h-5" />;
-      case 'learning': return <BarChart3 className="w-5 h-5" />;
-      case 'productivity': return <Target className="w-5 h-5" />;
-      default: return <Calendar className="w-5 h-5" />;
+      case 'strength': return <Dumbbell className="w-5 h-5 text-white" />;
+      case 'cardio': return <Heart className="w-5 h-5 text-white" />;
+      case 'bodyweight': return <Activity className="w-5 h-5 text-white" />;
+      case 'weight_loss': return <TrendingUp className="w-5 h-5 text-white" />;
+      case 'nutrition': return <Flame className="w-5 h-5 text-white" />;
+      default: return <Target className="w-5 h-5 text-white" />;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'fitness': return 'primary';
-      case 'health': return 'success';
-      case 'learning': return 'secondary';
-      case 'productivity': return 'accent';
+      case 'strength': return 'primary';
+      case 'cardio': return 'danger';
+      case 'bodyweight': return 'secondary';
+      case 'weight_loss': return 'success';
+      case 'nutrition': return 'accent';
       default: return 'neutral';
     }
   };
@@ -193,8 +199,84 @@ export const DashboardPage: React.FC = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Progress */}
-        <div className="lg:col-span-2">
+        {/* Recent Progress & Chart */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Chart */}
+          <Card>
+            <h2 className="text-2xl font-black text-black mb-6">Activity Overview (Last 7 Days)</h2>
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <LoadingSpinner />
+              </div>
+            ) : chartData.length > 0 && chartData.some(d => d.entries > 0) ? (
+              <div className="border-4 border-black bg-white p-4">
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="colorEntries" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={1}/>
+                        <stop offset="95%" stopColor="#93c5fd" stopOpacity={0.3}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="0"
+                      stroke="#000000"
+                      strokeWidth={2}
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="date"
+                      stroke="#000000"
+                      strokeWidth={3}
+                      tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
+                      axisLine={{ stroke: '#000000', strokeWidth: 3 }}
+                    />
+                    <YAxis
+                      stroke="#000000"
+                      strokeWidth={3}
+                      tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
+                      axisLine={{ stroke: '#000000', strokeWidth: 3 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fbbf24',
+                        border: '3px solid black',
+                        borderRadius: '0',
+                        boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
+                        fontWeight: 800,
+                        padding: '8px 12px'
+                      }}
+                      labelStyle={{
+                        color: '#000000',
+                        fontWeight: 800,
+                        marginBottom: '4px'
+                      }}
+                      itemStyle={{
+                        color: '#000000',
+                        fontWeight: 700
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="entries"
+                      stroke="#000000"
+                      strokeWidth={4}
+                      fillOpacity={1}
+                      fill="url(#colorEntries)"
+                      name="Entries"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
+                <p className="text-neutral-600">No data for the last 7 days</p>
+              </div>
+            )}
+          </Card>
+
+          {/* Recent Progress */}
           <Card>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-black text-black">Recent Progress</h2>
@@ -205,7 +287,7 @@ export const DashboardPage: React.FC = () => {
               </Link>
             </div>
 
-            {isLoadingProgress ? (
+            {isLoading ? (
               <div className="flex items-center justify-center h-32">
                 <LoadingSpinner />
               </div>
@@ -222,7 +304,7 @@ export const DashboardPage: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-black capitalize">
-                          {entry.category} - {entry.metric}
+                          {entry.category.replace(/_/g, ' ')} - {entry.metric.replace(/_/g, ' ')}
                         </p>
                         <p className="text-sm text-neutral-600">
                           {format(new Date(entry.date), 'MMM dd, yyyy')}
@@ -231,10 +313,10 @@ export const DashboardPage: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-black text-black">
-                        {entry.value} {entry.unit}
+                        {entry.value} {entry.unit || ''}
                       </p>
                       <Badge variant={getCategoryColor(entry.category) as any}>
-                        {entry.category}
+                        {entry.category.replace(/_/g, ' ')}
                       </Badge>
                     </div>
                   </div>
@@ -246,8 +328,8 @@ export const DashboardPage: React.FC = () => {
                   <BarChart3 className="w-8 h-8 text-neutral-500" />
                 </div>
                 <h3 className="text-lg font-bold text-black mb-2">No Progress Yet</h3>
-                <p className="text-neutral-600 mb-4">Start tracking your progress to see it here!</p>
-                <Link to="/progress/add">
+                <p className="text-neutral-600 mb-4">Start tracking your fitness progress today!</p>
+                <Link to="/progress">
                   <Button variant="primary">
                     Add Your First Entry
                   </Button>
@@ -263,7 +345,7 @@ export const DashboardPage: React.FC = () => {
           <Card>
             <h3 className="text-xl font-black text-black mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <Link to="/progress/add" className="block">
+              <Link to="/progress" className="block">
                 <Button variant="primary" className="w-full justify-start">
                   <Plus className="w-4 h-4 mr-2" />
                   Log Progress
@@ -287,14 +369,14 @@ export const DashboardPage: React.FC = () => {
           {/* Goals */}
           <Card>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-black">Your Goals</h3>
+              <h3 className="text-xl font-black text-black">Your Fitness Goals</h3>
               <Link to="/settings">
                 <Button variant="neutral" size="sm">
                   Edit
                 </Button>
               </Link>
             </div>
-            
+
             {Array.isArray(user.goals) && user.goals.length > 0 ? (
               <div className="space-y-2">
                 {user.goals.map((goal, index) => (
@@ -309,7 +391,7 @@ export const DashboardPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-sm text-neutral-600 mb-3">No goals set yet</p>
+                <p className="text-sm text-neutral-600 mb-3">No fitness goals set yet</p>
                 <Link to="/settings">
                   <Button variant="primary" size="sm">
                     Set Goals
@@ -318,29 +400,6 @@ export const DashboardPage: React.FC = () => {
               </div>
             )}
           </Card>
-
-          {/* Global Stats */}
-          {metrics && (
-            <Card>
-              <h3 className="text-xl font-black text-black mb-4">Global Stats</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600">Total Users</span>
-                  <span className="font-semibold text-black">{metrics.totalUsers}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600">Total Entries</span>
-                  <span className="font-semibold text-black">{metrics.totalProgressEntries}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600">Popular Category</span>
-                  <span className="font-semibold text-black capitalize">
-                    {metrics.mostPopularCategory || 'N/A'}
-                  </span>
-                </div>
-              </div>
-            </Card>
-          )}
         </div>
       </div>
     </div>

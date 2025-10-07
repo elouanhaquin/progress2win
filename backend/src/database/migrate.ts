@@ -126,6 +126,39 @@ async function runMigrations() {
       )
     `);
 
+    // Groups table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS groups (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        code TEXT UNIQUE NOT NULL,
+        creator_id INTEGER NOT NULL,
+        description TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Create index on group code for fast lookups
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_groups_code
+      ON groups(code)
+    `);
+
+    // Group members table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS group_members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(group_id, user_id),
+        FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `);
+
     // Insert default settings
     const insertSettings = db.prepare(`
       INSERT OR IGNORE INTO settings (key, value, description) VALUES (?, ?, ?)

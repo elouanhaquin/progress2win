@@ -5,7 +5,7 @@ export const errorHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   console.error('Error:', err);
 
   if (err.name === 'ValidationError') {

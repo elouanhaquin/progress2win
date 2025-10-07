@@ -1,0 +1,20 @@
+# Backend Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies first for better caching
+COPY backend/package*.json ./
+RUN npm install
+
+# Copy backend source
+COPY backend/ ./
+
+# Create data directory for SQLite
+RUN mkdir -p data
+
+# Expose port
+EXPOSE 3001
+
+# Start script
+CMD ["sh", "-c", "npx tsx src/database/migrate.ts && npx tsx src/index.ts"]

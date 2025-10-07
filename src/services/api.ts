@@ -21,22 +21,33 @@ import {
 // Helper for Express API calls
 class ExpressApiClient {
   private baseUrl: string;
-  private token: string | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
-    // Load token from localStorage
-    this.token = localStorage.getItem('accessToken');
+  }
+
+  private getToken(): string | null {
+    // Always get fresh token from localStorage
+    try {
+      const authStorage = localStorage.getItem('auth-storage');
+      if (authStorage) {
+        const parsed = JSON.parse(authStorage);
+        return parsed.state?.accessToken || null;
+      }
+    } catch (error) {
+      console.error('Failed to get token:', error);
+    }
+    return null;
   }
 
   setToken(token: string) {
-    this.token = token;
-    localStorage.setItem('accessToken', token);
+    // Token is managed by zustand store, this is just for backward compatibility
+    console.log('Token set via API client');
   }
 
   clearToken() {
-    this.token = null;
-    localStorage.removeItem('accessToken');
+    // Token is managed by zustand store
+    console.log('Token cleared via API client');
   }
 
   private async request<T>(
@@ -48,8 +59,9 @@ class ExpressApiClient {
       ...options.headers,
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const token = this.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -341,6 +353,52 @@ export const settingsApi = {
     } else {
       return await expressClient.get('/settings/metrics');
     }
+  },
+};
+
+// Groups API
+export const groupsApi = {
+  create: async (groupData: { name: string; description?: string }) => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    return await expressClient.post('/groups', groupData);
+  },
+
+  join: async (code: string) => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    return await expressClient.post('/groups/join', { code });
+  },
+
+  getMyGroup: async () => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    return await expressClient.get('/groups/my-group');
+  },
+
+  getGroup: async (groupId: number) => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    return await expressClient.get(`/groups/${groupId}`);
+  },
+
+  getGroupProgress: async (groupId: number, filters?: any) => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    const params = filters ? new URLSearchParams(filters).toString() : '';
+    return await expressClient.get(`/groups/${groupId}/progress${params ? '?' + params : ''}`);
+  },
+
+  leave: async (groupId: number) => {
+    if (isTauriBackend()) {
+      throw new Error('Groups not supported in Tauri backend');
+    }
+    return await expressClient.delete(`/groups/${groupId}/leave`);
   },
 };
 

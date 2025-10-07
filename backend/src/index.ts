@@ -12,6 +12,7 @@ import compareRoutes from './routes/compare.js';
 import notificationsRoutes from './routes/notifications.js';
 import subscriptionsRoutes from './routes/subscriptions.js';
 import settingsRoutes from './routes/settings.js';
+import groupsRoutes from './routes/groups.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -63,6 +64,7 @@ app.use('/api/compare', compareRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/groups', groupsRoutes);
 
 // 404 handler
 app.use((req, res) => {

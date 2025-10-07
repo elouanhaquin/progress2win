@@ -13,8 +13,8 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
 
 const generateTokens = (userId: number) => {
-  const accessToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-  const refreshToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
+  const accessToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
+  const refreshToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN } as jwt.SignOptions);
   return { accessToken, refreshToken };
 };
 
@@ -27,25 +27,35 @@ router.post('/register', async (req, res, next) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
+    // Check if email already exists
+    const existingUser = await query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
+
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Insert user - SQLite doesn't support RETURNING, we'll fetch after insert
     const insertResult = await query(
-      `INSERT INTO users (email, password_hash, first_name, last_name) 
+      `INSERT INTO users (email, password_hash, first_name, last_name)
        VALUES (?, ?, ?, ?)`,
       [email, passwordHash, firstName, lastName]
     );
-    
+
     // Fetch the inserted user
     const result = await query(
       'SELECT id, email, first_name, last_name, avatar_url, goals, is_active, email_verified, created_at, updated_at FROM users WHERE id = ?',
-      [insertResult.rows[0].lastID]
+      [insertResult.rows[0].lastInsertRowid]
     );
 
     const user = result.rows[0];
     res.status(201).json(user);
-  } catch (error) {
+  } catch (error: any) {
+    // Handle SQLite unique constraint error
+    if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
     next(error);
   }
 });
