@@ -1,28 +1,48 @@
 import React, { useState } from 'react';
 import { Settings, User, Bell, Shield, Palette, Save } from 'lucide-react';
-import { Card, Button, Input, Textarea, Badge } from '../components/UI';
+import { Card, Button, Input, Alert } from '../components/UI';
 import { useAuthStore } from '../stores/authStore';
+import { userApi } from '../services/api';
 
 const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
-  const [goals, setGoals] = useState(user?.goals || []);
-  const [newGoal, setNewGoal] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const addGoal = () => {
-    if (newGoal.trim() && !goals.includes(newGoal.trim())) {
-      setGoals([...goals, newGoal.trim()]);
-      setNewGoal('');
+  // Profile form state
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const updatedUser = await userApi.updateProfile(user.id, {
+        firstName,
+        lastName,
+        email,
+        avatarUrl,
+      });
+
+      updateUser(updatedUser);
+      setSuccess('Profile updated successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update profile');
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const removeGoal = (index: number) => {
-    setGoals(goals.filter((_, i) => i !== index));
   };
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'goals', label: 'Goals', icon: Settings },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy', icon: Shield },
     { id: 'appearance', label: 'Appearance', icon: Palette },
@@ -38,10 +58,30 @@ const SettingsPage: React.FC = () => {
             Customize your Progress2Win experience
           </p>
         </div>
-        <Button variant="primary" size="lg" icon={<Save className="w-5 h-5" />}>
-          Save Changes
-        </Button>
+        {activeTab === 'profile' && (
+          <Button
+            variant="primary"
+            size="lg"
+            icon={<Save className="w-5 h-5" />}
+            onClick={handleSaveProfile}
+            loading={isLoading}
+          >
+            Save Changes
+          </Button>
+        )}
       </div>
+
+      {/* Alerts */}
+      {error && (
+        <Alert variant="danger" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="success" onClose={() => setSuccess(null)}>
+          {success}
+        </Alert>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar */}
@@ -78,72 +118,30 @@ const SettingsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="First Name"
-                    defaultValue={user?.firstName || ''}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
                   />
                   <Input
                     label="Last Name"
-                    defaultValue={user?.lastName || ''}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
                   />
                 </div>
                 <Input
                   label="Email Address"
                   type="email"
-                  defaultValue={user?.email || ''}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="john@example.com"
                 />
                 <Input
                   label="Avatar URL"
-                  defaultValue={user?.avatarUrl || ''}
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
                   placeholder="https://example.com/avatar.jpg"
                 />
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'goals' && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Your Goals</h2>
-              <div className="space-y-6">
-                <div className="flex space-x-3">
-                  <Input
-                    placeholder="Add a new goal..."
-                    value={newGoal}
-                    onChange={(e) => setNewGoal(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addGoal()}
-                  />
-                  <Button variant="primary" onClick={addGoal}>
-                    Add Goal
-                  </Button>
-                </div>
-                
-                <div className="space-y-3">
-                  {goals.map((goal, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-neutral-50 border-2 border-black shadow-neo-sm"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-primary-500 border border-black"></div>
-                        <span className="font-medium text-black">{goal}</span>
-                      </div>
-                      <button
-                        onClick={() => removeGoal(index)}
-                        className="text-danger-500 hover:text-danger-700 transition-colors"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {goals.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-neutral-600 mb-4">No goals set yet</p>
-                    <p className="text-sm text-neutral-500">Add your first goal above to get started!</p>
-                  </div>
-                )}
               </div>
             </Card>
           )}

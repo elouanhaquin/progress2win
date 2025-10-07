@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  BarChart3, 
-  Users, 
-  Bell, 
-  Settings, 
+import {
+  Home,
+  BarChart3,
+  Users,
+  Target,
+  Settings,
   Trophy,
   Plus,
   Menu,
@@ -18,9 +18,9 @@ import { clsx } from 'clsx';
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Progress', href: '/progress', icon: BarChart3 },
+  { name: 'Goals', href: '/goals', icon: Target },
   { name: 'Compare', href: '/compare', icon: Users },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -136,7 +136,7 @@ export const Sidebar: React.FC = () => {
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuthStore();
-  const { toggleSidebar, unreadCount } = useAppStore();
+  const { toggleSidebar } = useAppStore();
 
   const handleLogout = async () => {
     try {
@@ -165,16 +165,6 @@ export const Header: React.FC = () => {
 
         {/* Right side */}
         <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <button className="relative p-2 hover:bg-neutral-100 transition-colors">
-            <Bell className="w-6 h-6" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-danger-500 text-white text-xs font-bold rounded-full border border-black flex items-center justify-center">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            )}
-          </button>
-
           {/* User menu */}
           {user && (
             <div className="flex items-center space-x-3">
@@ -183,7 +173,7 @@ export const Header: React.FC = () => {
                   {user.firstName} {user.lastName}
                 </p>
                 <p className="text-xs text-neutral-600">
-                  {user.goals.length} goals
+                  {user.email}
                 </p>
               </div>
               <button

@@ -129,6 +129,43 @@ export interface LeaderboardEntry {
   entryCount: number;
 }
 
+// Group types
+export interface Group {
+  id: number;
+  name: string;
+  code: string;
+  creator_id: number;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+  member_count?: number;
+  creator_first_name?: string;
+  creator_last_name?: string;
+}
+
+export interface GroupMember {
+  id: number;
+  first_name: string;
+  last_name: string;
+  avatar_url?: string;
+  joined_at: string;
+}
+
+export interface GroupWithMembers extends Group {
+  members: GroupMember[];
+}
+
+export interface GroupCreate {
+  name: string;
+  description?: string;
+}
+
+export interface GroupProgressEntry extends Progress {
+  first_name: string;
+  last_name: string;
+  avatar_url?: string;
+}
+
 // Form validation schemas
 export interface LoginFormData {
   email: string;
@@ -213,12 +250,11 @@ export type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
 // Progress categories
 export const PROGRESS_CATEGORIES = [
-  'fitness',
-  'health',
-  'learning',
-  'productivity',
-  'finance',
-  'hobbies',
+  'strength',
+  'cardio',
+  'bodyweight',
+  'weight_loss',
+  'nutrition',
   'other'
 ] as const;
 
@@ -226,12 +262,11 @@ export type ProgressCategory = typeof PROGRESS_CATEGORIES[number];
 
 // Common metrics
 export const COMMON_METRICS = {
-  fitness: ['weight', 'reps', 'sets', 'distance', 'time', 'calories'],
-  health: ['weight', 'blood_pressure', 'heart_rate', 'steps', 'sleep_hours'],
-  learning: ['hours_studied', 'pages_read', 'lessons_completed', 'words_learned'],
-  productivity: ['tasks_completed', 'hours_worked', 'projects_finished'],
-  finance: ['income', 'expenses', 'savings', 'investments'],
-  hobbies: ['hours_practiced', 'pieces_completed', 'sessions'],
+  strength: ['bench_press', 'squat', 'deadlift', 'overhead_press', 'weight_lifted', 'reps', 'sets'],
+  cardio: ['distance', 'time', 'speed', 'calories', 'heart_rate'],
+  bodyweight: ['pull_ups', 'push_ups', 'dips', 'sit_ups', 'planks', 'reps', 'time'],
+  weight_loss: ['weight', 'body_fat_percentage', 'waist', 'chest', 'arms', 'legs'],
+  nutrition: ['calories', 'protein', 'carbs', 'fats', 'water'],
   other: ['custom']
 } as const;
 

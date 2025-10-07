@@ -38,22 +38,21 @@ router.put('/:userId', authenticate, async (req: AuthRequest, res, next) => {
 
     const updates: string[] = [];
     const values: any[] = [];
-    let paramCount = 1;
 
     if (firstName !== undefined) {
-      updates.push(`first_name = $${paramCount++}`);
+      updates.push(`first_name = ?`);
       values.push(firstName);
     }
     if (lastName !== undefined) {
-      updates.push(`last_name = $${paramCount++}`);
+      updates.push(`last_name = ?`);
       values.push(lastName);
     }
     if (avatarUrl !== undefined) {
-      updates.push(`avatar_url = $${paramCount++}`);
+      updates.push(`avatar_url = ?`);
       values.push(avatarUrl);
     }
     if (goals !== undefined) {
-      updates.push(`goals = $${paramCount++}`);
+      updates.push(`goals = ?`);
       values.push(JSON.stringify(goals));
     }
 
@@ -68,7 +67,7 @@ router.put('/:userId', authenticate, async (req: AuthRequest, res, next) => {
       `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
       values
     );
-    
+
     // Fetch updated user
     const fetchResult = await query(
       'SELECT id, email, first_name, last_name, avatar_url, goals, is_active, email_verified, created_at, updated_at FROM users WHERE id = ?',
