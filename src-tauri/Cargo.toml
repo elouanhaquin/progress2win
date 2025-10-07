@@ -1,0 +1,31 @@
+[package]
+name = "progress2win"
+version = "0.1.0"
+description = "Progress2Win - Track and compare your progress"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.0", features = ["tray-icon"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite", "chrono", "uuid"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+bcrypt = "0.15"
+jsonwebtoken = "9.2"
+anyhow = "1.0"
+thiserror = "1.0"
+base64 = "0.21"
+rand = "0.8"
+
+[dev-dependencies]
+tauri = { version = "2.0", features = [] }

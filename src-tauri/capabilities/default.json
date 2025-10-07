@@ -1,0 +1,7 @@
+{
+  "identifier": "default",
+  "description": "Default permissions for Progress2Win",
+  "permissions": [
+    "core:default"
+  ]
+}
