@@ -1,161 +1,230 @@
-# Progress2Win - Backend Tauri
+# Tracky (Progress2Win) 🎯
 
-Backend développé avec Tauri et Rust pour l'application Progress2Win.
+Application de suivi de progrès fitness avec comparaison entre amis, style neo-brutalism.
 
-## Architecture
-
-Le backend utilise :
-- **Tauri** : Framework pour applications natives cross-platform
-- **SQLite** : Base de données locale (plus adaptée que PostgreSQL pour Tauri)
-- **SQLx** : ORM async pour Rust
-- **JWT** : Authentification avec tokens
-- **bcrypt** : Hachage des mots de passe
-
-## Structure du projet
-
-```
-src/
-├── main.rs              # Point d'entrée de l'application
-├── database.rs          # Configuration et migrations de la base de données
-├── models.rs            # Structures de données (User, Progress, etc.)
-├── error.rs             # Gestion des erreurs personnalisées
-└── commands/            # Commandes Tauri (équivalent des routes API)
-    ├── mod.rs
-    ├── auth.rs          # Authentification (register, login, logout, etc.)
-    ├── users.rs         # Gestion des profils utilisateurs
-    ├── progress.rs      # Suivi des progrès
-    ├── compare.rs       # Comparaison et leaderboard
-    └── other.rs         # Notifications, abonnements, paramètres
-```
-
-## Commandes Tauri disponibles
-
-### Authentification
-- `register_user` : Créer un compte utilisateur
-- `login_user` : Connexion avec email/mot de passe
-- `logout_user` : Déconnexion
-- `refresh_token` : Renouvellement du token JWT
-- `forgot_password` : Demande de réinitialisation du mot de passe
-- `reset_password` : Réinitialisation avec token
-- `get_current_user` : Récupérer les infos du user connecté
-
-### Utilisateurs
-- `get_user_profile` : Récupérer profil utilisateur public
-- `update_user_profile` : Modifier profil (nom, avatar, objectifs)
-- `delete_user_account` : Supprimer compte utilisateur
-
-### Progression
-- `add_progress` : Ajouter une nouvelle mesure
-- `get_user_progress` : Récupérer toutes les mesures du user connecté
-- `get_user_progress_by_id` : Récupérer mesures d'un autre utilisateur
-- `update_progress` : Modifier une mesure existante
-- `delete_progress` : Supprimer une mesure
-
-### Comparaison
-- `compare_progress` : Comparer le user connecté avec ses amis
-- `invite_friend` : Inviter un ami à comparer
-- `get_leaderboard` : Récupérer classement global ou groupe spécifique
-
-### Notifications
-- `get_notifications` : Liste notifications pour user connecté
-- `create_notification` : Créer une notification
-- `mark_notification_read` : Marquer comme lue
-- `delete_notification` : Supprimer notification
-
-### Abonnements
-- `create_checkout_session` : Initier paiement Stripe
-- `get_subscription` : Récupérer abonnement actif
-- `cancel_subscription` : Annuler abonnement
-- `handle_stripe_webhook` : Webhook Stripe
-
-### Paramètres
-- `get_settings` : Récupérer paramètres globaux
-- `update_settings` : Modifier paramètres
-- `get_metrics` : Statistiques générales
-
-## Installation et développement
+## 🚀 Démarrage rapide avec Docker
 
 ### Prérequis
-- Rust (dernière version stable)
-- Tauri CLI : `cargo install tauri-cli`
+
+- Docker Desktop installé ([Télécharger](https://www.docker.com/products/docker-desktop))
 
 ### Installation
+
 ```bash
-# Cloner le projet
-git clone <repository>
-cd progress2win
+# 1. Cloner/Télécharger le projet
+cd Tracky
 
-# Installer les dépendances
-cargo build
+# 2. Démarrer avec Docker (Windows)
+start.bat
 
-# Lancer en mode développement
-cargo tauri dev
+# OU avec Docker Compose directement
+docker-compose up -d
 ```
 
-### Tests
-```bash
-# Lancer tous les tests
-cargo test
+### Accès
 
-# Lancer les tests avec couverture
-cargo test -- --nocapture
+- **Application** : http://localhost
+- **API Backend** : http://localhost:3001/api
+
+### Commandes utiles
+
+```bash
+# Voir les logs
+docker-compose logs -f
+
+# Logs backend uniquement
+docker-compose logs -f backend
+
+# Logs frontend uniquement
+docker-compose logs -f frontend
+
+# Arrêter l'application
+docker-compose down
+
+# Redémarrer
+docker-compose restart
+
+# Rebuild après des changements
+docker-compose up --build -d
 ```
 
-## Base de données
+## 📦 Architecture
 
-La base de données SQLite est créée automatiquement au premier lancement avec les tables :
-- `users` : Utilisateurs
-- `refresh_tokens` : Tokens de rafraîchissement
-- `password_reset_tokens` : Tokens de réinitialisation
-- `progress` : Entrées de progression
-- `notifications` : Notifications
-- `subscriptions` : Abonnements
-- `user_friends` : Relations d'amitié
-- `settings` : Paramètres globaux
+```
+Browser (localhost)
+    ↓
+Nginx (Port 80)
+    ├── Frontend (React/Vite/TypeScript)
+    └── /api → Backend (Express/Node.js:3001)
+                  └── SQLite Database (Volume persisté)
+```
 
-## Sécurité
+## 🛠️ Développement local (sans Docker)
 
-- Mots de passe hachés avec bcrypt (12 rounds)
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Le backend démarre sur http://localhost:3001
+
+### Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+Le frontend démarre sur http://localhost:5173
+
+## ✨ Fonctionnalités
+
+- ✅ **Authentification** : Inscription, connexion, profil
+- ✅ **Suivi de progrès** : Log tes entrées fitness (force, cardio, poids, etc.)
+- ✅ **Goals** : Définis des objectifs avec deadline et suivi visuel
+- ✅ **Groupes** : Rejoins/crée des groupes avec code de partage
+- ✅ **Comparaison** : Compare tes stats avec tes amis
+- ✅ **Leaderboard** : Classements par catégories et métriques
+- ✅ **Célébrations** : Confettis et animations fun après chaque entry ! 🎉
+- ✅ **Design Neo-Brutalism** : Bordures épaisses, couleurs vives, ombres dures
+
+## 🎨 Tech Stack
+
+### Frontend
+- React 18 + TypeScript
+- Vite (build tool)
+- React Router
+- Zustand (state management)
+- React Hook Form + Zod (validation)
+- Recharts (graphiques)
+- Tailwind CSS (styling neo-brutalism)
+- Lucide React (icônes)
+
+### Backend
+- Express.js + TypeScript
+- Better-SQLite3 (base de données)
+- JWT (authentification)
+- Bcrypt (hashing passwords)
+- Helmet + CORS (sécurité)
+
+### DevOps
+- Docker + Docker Compose
+- Nginx (reverse proxy + static files)
+- Multi-stage builds optimisés
+
+## 📊 Catégories de progrès
+
+- **Strength** : bench_press, squat, deadlift, etc.
+- **Cardio** : distance, time, speed, calories
+- **Bodyweight** : pull_ups, push_ups, planks, etc.
+- **Weight Loss** : weight, body_fat, waist, etc.
+- **Nutrition** : calories, protein, carbs, fats, water
+- **Other** : custom metrics
+
+## 🔐 Sécurité
+
+- Mots de passe hashés avec bcrypt
 - Tokens JWT pour l'authentification
-- Validation des données d'entrée
-- Gestion des erreurs sécurisée
-- Protection contre les injections SQL (SQLx)
+- CORS configuré
+- Helmet pour headers de sécurité
+- Rate limiting sur l'API
+- Variables d'environnement pour les secrets
 
-## Déploiement
+## 📝 Variables d'environnement
 
-Pour créer une application native :
+Créer un fichier `.env` à la racine :
+
+```env
+# JWT Secrets (CHANGER EN PRODUCTION!)
+JWT_SECRET=your-super-secret-key-here
+JWT_REFRESH_SECRET=your-refresh-secret-key-here
+
+# Port
+PORT=3001
+NODE_ENV=production
+```
+
+## 🗄️ Persistance des données
+
+La base de données SQLite est stockée dans un volume Docker :
+```
+./backend/data/progress2win.db
+```
+
+### Backup
 
 ```bash
-# Build de production
-cargo tauri build
+# Copier la DB depuis le container
+docker cp tracky-backend:/app/data/progress2win.db ./backup.db
 ```
 
-L'exécutable sera généré dans `src-tauri/target/release/bundle/`.
+### Restore
 
-## Intégration Frontend
-
-Le frontend React peut appeler les commandes Tauri via l'API Tauri :
-
-```javascript
-import { invoke } from '@tauri-apps/api/tauri';
-
-// Exemple d'appel
-const user = await invoke('register_user', {
-  userData: {
-    email: 'user@example.com',
-    password: 'password123',
-    firstName: 'John',
-    lastName: 'Doe'
-  }
-});
+```bash
+# Copier une backup vers le container
+docker cp ./backup.db tracky-backend:/app/data/progress2win.db
+docker-compose restart backend
 ```
 
-## Prochaines étapes
+## 🐛 Troubleshooting
 
-1. **Frontend React** : Développer l'interface utilisateur
-2. **Tests E2E** : Tests d'intégration complets
-3. **Stripe Integration** : Implémentation complète des paiements
-4. **Email Service** : Service d'envoi d'emails pour les notifications
-5. **Synchronisation** : Sync avec des applications tierces
-6. **Analytics** : Tableaux de bord avancés
-7. **Mobile** : Version mobile avec Tauri mobile
+### Les containers ne démarrent pas
+
+```bash
+# Voir les logs d'erreur
+docker-compose logs
+
+# Rebuild from scratch
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Port 80 déjà utilisé
+
+Modifier `docker-compose.yml` :
+
+```yaml
+frontend:
+  ports:
+    - "8080:80"  # Utiliser le port 8080 au lieu de 80
+```
+
+Puis accéder via http://localhost:8080
+
+### Base de données corrompue
+
+```bash
+# Supprimer et recréer
+docker-compose down -v
+docker-compose up -d
+```
+
+## 👥 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit (`git commit -m 'Add AmazingFeature'`)
+4. Push (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📄 License
+
+MIT
+
+## 🎯 Roadmap
+
+- [ ] Notifications push
+- [ ] Export des données (CSV, PDF)
+- [ ] Statistiques avancées
+- [ ] Mobile app (React Native)
+- [ ] Intégrations (Strava, MyFitnessPal, etc.)
+- [ ] Challenges entre groupes
+- [ ] Badges et achievements
+
+---
+
+Made with 💪 and ☕
