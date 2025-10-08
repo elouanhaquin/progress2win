@@ -56,7 +56,7 @@ const LeaderboardPage: React.FC = () => {
         setGroupProgress(progress);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load leaderboard');
+      setError(err.message || 'Échec du chargement du classement');
     } finally {
       setIsLoading(false);
     }
@@ -160,19 +160,19 @@ const LeaderboardPage: React.FC = () => {
     return (
       <div className="space-y-8">
         <div>
-          <h1 className="text-4xl font-black text-black">Leaderboard</h1>
+          <h1 className="text-4xl font-black text-black">Classement</h1>
           <p className="text-lg text-neutral-600 font-medium mt-2">
-            Compare with your group members
+            Compare-toi avec les membres de ton groupe
           </p>
         </div>
 
         <Card>
           <div className="text-center py-12">
             <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">No Group Yet</h3>
-            <p className="text-neutral-600 mb-4">Join a group to see the leaderboard!</p>
+            <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
+            <p className="text-neutral-600 mb-4">Rejoins un groupe pour voir le classement!</p>
             <Button variant="primary" onClick={() => window.location.href = '/compare'}>
-              Go to Compare
+              Aller à Comparer
             </Button>
           </div>
         </Card>
@@ -185,14 +185,14 @@ const LeaderboardPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-black">Leaderboard</h1>
+          <h1 className="text-4xl font-black text-black">Classement</h1>
           <p className="text-lg text-neutral-600 font-medium mt-2">
-            {group.name} - Who's crushing it?
+            {group.name} - Qui est au top?
           </p>
         </div>
         {myRank > 0 && (
           <Badge variant="accent" className="text-lg px-4 py-2">
-            Your Rank: #{myRank}
+            Ton rang: #{myRank}
           </Badge>
         )}
       </div>
@@ -207,8 +207,8 @@ const LeaderboardPage: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">No Data Yet</h3>
-            <p className="text-neutral-600">Start logging progress to see the leaderboard!</p>
+            <h3 className="text-lg font-bold text-black mb-2">Aucune donnée</h3>
+            <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir le classement!</p>
           </div>
         </Card>
       ) : (
@@ -223,9 +223,9 @@ const LeaderboardPage: React.FC = () => {
                     <Medal className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-black">
-                    {top3[1].userId === user?.id ? 'You!' : top3[1].name}
+                    {top3[1].userId === user?.id ? 'Toi!' : top3[1].name}
                   </h3>
-                  <p className="text-sm text-neutral-600">{top3[1].totalEntries} entries</p>
+                  <p className="text-sm text-neutral-600">{top3[1].totalEntries} entrées</p>
                   <Badge variant="secondary" className="mt-2">#2</Badge>
                 </Card>
               )}
@@ -237,9 +237,9 @@ const LeaderboardPage: React.FC = () => {
                     <Crown className="w-10 h-10 text-black" />
                   </div>
                   <h3 className="text-xl font-black text-black">
-                    {top3[0].userId === user?.id ? 'You!' : top3[0].name}
+                    {top3[0].userId === user?.id ? 'Toi!' : top3[0].name}
                   </h3>
-                  <p className="text-base text-neutral-600 font-semibold">{top3[0].totalEntries} entries</p>
+                  <p className="text-base text-neutral-600 font-semibold">{top3[0].totalEntries} entrées</p>
                   <Badge variant="accent" className="mt-2">#1</Badge>
                 </Card>
               )}
@@ -251,9 +251,9 @@ const LeaderboardPage: React.FC = () => {
                     <Medal className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-black">
-                    {top3[2].userId === user?.id ? 'You!' : top3[2].name}
+                    {top3[2].userId === user?.id ? 'Toi!' : top3[2].name}
                   </h3>
-                  <p className="text-sm text-neutral-600">{top3[2].totalEntries} entries</p>
+                  <p className="text-sm text-neutral-600">{top3[2].totalEntries} entrées</p>
                   <Badge variant="primary" className="mt-2">#3</Badge>
                 </Card>
               )}
@@ -262,7 +262,7 @@ const LeaderboardPage: React.FC = () => {
 
           {/* Full Leaderboard */}
           <Card>
-            <h2 className="text-2xl font-black text-black mb-6">Full Rankings</h2>
+            <h2 className="text-2xl font-black text-black mb-6">Classement complet</h2>
             <div className="space-y-4">
               {leaderboard.map((entry, index) => {
                 const rank = index + 1;
@@ -291,13 +291,13 @@ const LeaderboardPage: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-black">
-                          {isCurrentUser ? 'You!' : entry.name}
+                          {isCurrentUser ? 'Toi!' : entry.name}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-black text-black">{entry.totalEntries}</p>
-                      <p className="text-xs text-neutral-500">entries</p>
+                      <p className="text-xs text-neutral-500">entrées</p>
                     </div>
                   </div>
                 );
@@ -308,9 +308,9 @@ const LeaderboardPage: React.FC = () => {
           {/* Metric Leaders */}
           {metricLeaders.length > 0 && (
             <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Metric Leaders</h2>
+              <h2 className="text-2xl font-black text-black mb-6">Leaders par métrique</h2>
               <p className="text-sm text-neutral-600 mb-4">
-                Only showing metrics where at least 2 members have entries
+                Seulement les métriques avec au moins 2 membres ayant des entrées
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {metricLeaders.map((leader) => (
@@ -327,14 +327,14 @@ const LeaderboardPage: React.FC = () => {
                       {leader.category.replace(/_/g, ' ')}
                     </p>
                     <p className="text-sm text-neutral-600 mb-2">
-                      {leader.userId === user?.id ? 'You!' : leader.name}
+                      {leader.userId === user?.id ? 'Toi!' : leader.name}
                     </p>
                     <div className="flex items-center gap-2">
                       <Trophy className="w-4 h-4 text-accent-600" />
-                      <p className="text-lg font-black text-black">{leader.count} entries</p>
+                      <p className="text-lg font-black text-black">{leader.count} entrées</p>
                     </div>
                     <p className="text-xs text-neutral-500 mt-1">
-                      Avg: {leader.avgValue.toFixed(1)}
+                      Moy: {leader.avgValue.toFixed(1)}
                     </p>
                   </div>
                 ))}

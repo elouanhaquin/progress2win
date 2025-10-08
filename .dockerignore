@@ -1,0 +1,52 @@
+# Node modules
+node_modules
+backend/node_modules
+npm-debug.log
+
+# Build outputs
+dist
+build
+backend/dist
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Test
+coverage
+.nyc_output
+
+# Tauri
+src-tauri
+target
+
+# Database (keep only schema, not data)
+backend/data/*.db
+backend/data/*.db-*
+
+# Misc
+*.md
+!README.md
+.eslintrc*
+.prettierrc*
+tsconfig.json

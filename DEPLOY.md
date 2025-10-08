@@ -1,317 +1,84 @@
-# 🚀 Guide de déploiement sur VPS
+# 🔄 Guide de Mise à Jour - Progress2Win
 
-Ce guide explique comment déployer Tracky sur un VPS (DigitalOcean, OVH, AWS, etc.)
+Ce guide explique comment mettre à jour Progress2Win une fois déjà déployé sur votre VPS.
+
+> **Note :** Pour un premier déploiement, consultez `DEPLOY-INITIAL.md`
 
 ## 📋 Prérequis
 
-- Un VPS avec Ubuntu 22.04 ou 24.04
-- Un nom de domaine (ex: tracky.com)
+- Application Progress2Win déjà déployée sur un VPS
 - Accès SSH au VPS
-- 15 minutes ⏱️
+- Code source mis à jour (nouvelles fonctionnalités, corrections)
+- ⏱️ Temps estimé : 5-10 minutes
 
-## 🎯 Étape 1 : Configuration du VPS
+---
 
-### Connexion SSH
+## 🎯 Méthode 1 : Mise à jour rapide (Git)
+
+**Utilisez cette méthode si vous avez initialement déployé via Git.**
+
+### Étape 1 : Connexion au VPS
 
 ```bash
 ssh root@votre-ip-vps
+# ou si vous avez changé le port SSH :
+ssh -p 2222 root@votre-ip-vps
 ```
 
-### Installation de Docker
+### Étape 2 : Backup de la base de données (IMPORTANT !)
 
 ```bash
-# Mettre à jour le système
-apt update && apt upgrade -y
+# Se placer dans le dossier du projet
+cd /opt/progress2win
 
-# Installer les dépendances
-apt install -y apt-transport-https ca-certificates curl software-properties-common
+# Créer un backup avant toute modification
+DATE=$(date +%Y%m%d_%H%M%S)
+mkdir -p /root/backups
+docker cp progress2win-backend:/app/data/progress2win.db /root/backups/progress2win_backup_$DATE.db
 
-# Ajouter la clé GPG Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-# Ajouter le repository Docker
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Installer Docker
-apt update
-apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-# Vérifier l'installation
-docker --version
-docker compose version
+echo "✅ Backup créé : progress2win_backup_$DATE.db"
 ```
 
-### Installer Git
+### Étape 3 : Récupérer les dernières modifications
 
 ```bash
-apt install -y git
+# Sauvegarder le .env actuel (au cas où)
+cp .env .env.backup
+
+# Récupérer les derniers changements depuis Git
+git pull origin main
+# ou si vous êtes sur master :
+# git pull origin master
 ```
 
-## 🎯 Étape 2 : Transférer le projet
-
-### Option A : Via Git (recommandé)
+### Étape 4 : Mettre à jour les variables d'environnement (si nécessaire)
 
 ```bash
-# Si tu as un repo GitHub
-cd /opt
-git clone https://github.com/ton-username/Tracky.git
-cd Tracky
+# Vérifier si de nouvelles variables ont été ajoutées
+cat .env.example
+
+# Si de nouvelles variables sont nécessaires, les ajouter :
+nano .env
+# Ajouter les nouvelles variables (ex: MAILGUN_API_KEY)
 ```
 
-### Option B : Via SCP (depuis ton PC)
+### Étape 5 : Rebuild et redéployer
 
 ```bash
-# Sur ton PC Windows (depuis PowerShell)
-scp -r C:\Users\Tiaporo\Desktop\Tracky root@votre-ip-vps:/opt/
-```
-
-### Option C : Via SFTP (FileZilla)
-
-1. Télécharger [FileZilla](https://filezilla-project.org/)
-2. Se connecter au VPS
-3. Transférer le dossier Tracky vers `/opt/Tracky`
-
-## 🎯 Étape 3 : Configuration pour la production
-
-### Créer le fichier .env
-
-```bash
-cd /opt/Tracky
-
-# Créer .env avec des secrets sécurisés
-cat > .env << 'EOF'
-# JWT Secrets - GÉNÉRER DES VALEURS ALÉATOIRES FORTES
-JWT_SECRET=$(openssl rand -base64 32)
-JWT_REFRESH_SECRET=$(openssl rand -base64 32)
-
-# Backend
-PORT=3001
-NODE_ENV=production
-
-# Frontend (si besoin)
-VITE_API_URL=/api
-VITE_BACKEND_TYPE=express
-EOF
-
-# Générer des secrets aléatoires sécurisés
-JWT_SECRET=$(openssl rand -base64 32)
-JWT_REFRESH=$(openssl rand -base64 32)
-
-# Mettre à jour .env avec les vraies valeurs
-echo "JWT_SECRET=$JWT_SECRET" > .env
-echo "JWT_REFRESH_SECRET=$JWT_REFRESH" >> .env
-echo "PORT=3001" >> .env
-echo "NODE_ENV=production" >> .env
-```
-
-### Modifier docker-compose.yml pour la production
-
-```bash
-nano docker-compose.yml
-```
-
-Remplacer le contenu par :
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    container_name: tracky-backend
-    restart: always
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
-    volumes:
-      - ./backend/data:/app/data
-    networks:
-      - tracky-network
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: tracky-frontend
-    restart: always
-    depends_on:
-      - backend
-    networks:
-      - tracky-network
-
-  nginx:
-    image: nginx:alpine
-    container_name: tracky-nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx-prod.conf:/etc/nginx/conf.d/default.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - tracky-network
-
-  certbot:
-    image: certbot/certbot
-    container_name: tracky-certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-networks:
-  tracky-network:
-    driver: bridge
-```
-
-## 🎯 Étape 4 : Configuration Nginx avec SSL
-
-### Créer nginx-prod.conf
-
-```bash
-cat > nginx-prod.conf << 'EOF'
-# Redirection HTTP vers HTTPS
-server {
-    listen 80;
-    server_name tracky.com www.tracky.com;
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-
-    location / {
-        return 301 https://$server_name$request_uri;
-    }
-}
-
-# Configuration HTTPS
-server {
-    listen 443 ssl http2;
-    server_name tracky.com www.tracky.com;
-
-    # Certificats SSL (Let's Encrypt)
-    ssl_certificate /etc/letsencrypt/live/tracky.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/tracky.com/privkey.pem;
-
-    # Paramètres SSL recommandés
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-
-    # Frontend - fichiers statiques du container frontend
-    location / {
-        proxy_pass http://frontend:80;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    # API Backend
-    location /api {
-        proxy_pass http://backend:3001;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Logs
-    access_log /var/log/nginx/tracky_access.log;
-    error_log /var/log/nginx/tracky_error.log;
-}
-EOF
-```
-
-### Obtenir un certificat SSL (Let's Encrypt)
-
-```bash
-# D'abord, pointer ton domaine vers l'IP du VPS (DNS A record)
-# Attendre quelques minutes que le DNS se propage
-
-# Lancer nginx temporairement sans SSL
-docker run -d --name temp-nginx -p 80:80 -p 443:443 \
-  -v $(pwd)/certbot/conf:/etc/letsencrypt \
-  -v $(pwd)/certbot/www:/var/www/certbot \
-  nginx:alpine
-
-# Obtenir le certificat
-docker run --rm \
-  -v $(pwd)/certbot/conf:/etc/letsencrypt \
-  -v $(pwd)/certbot/www:/var/www/certbot \
-  certbot/certbot certonly --webroot \
-  -w /var/www/certbot \
-  -d tracky.com \
-  -d www.tracky.com \
-  --email ton-email@example.com \
-  --agree-tos \
-  --no-eff-email
-
-# Stopper nginx temporaire
-docker stop temp-nginx && docker rm temp-nginx
-```
-
-## 🎯 Étape 5 : Déployer l'application
-
-```bash
-# Build et démarrer
+# Rebuild les images Docker avec les derniers changements
 docker compose up -d --build
 
-# Vérifier que tout tourne
+# Attendre quelques secondes que les containers démarrent
+sleep 10
+
+# Vérifier que tout fonctionne
 docker compose ps
-
-# Voir les logs
-docker compose logs -f
 ```
 
-## 🎯 Étape 6 : Configuration du pare-feu
+### Étape 6 : Vérifier les logs
 
 ```bash
-# Installer UFW (si pas déjà installé)
-apt install -y ufw
-
-# Autoriser SSH (IMPORTANT!)
-ufw allow 22/tcp
-
-# Autoriser HTTP et HTTPS
-ufw allow 80/tcp
-ufw allow 443/tcp
-
-# Activer le pare-feu
-ufw enable
-
-# Vérifier
-ufw status
-```
-
-## 🎯 Étape 7 : Configuration DNS
-
-Chez ton registrar de domaine (ex: OVH, Namecheap, etc.) :
-
-```
-Type A  | Nom: @          | Valeur: IP-DU-VPS
-Type A  | Nom: www        | Valeur: IP-DU-VPS
-```
-
-## 📊 Monitoring et maintenance
-
-### Voir les logs en temps réel
-
-```bash
+# Voir les logs pour détecter d'éventuelles erreurs
 docker compose logs -f
 
 # Logs backend uniquement
@@ -319,143 +86,332 @@ docker compose logs -f backend
 
 # Logs frontend uniquement
 docker compose logs -f frontend
+
+# Appuyer sur Ctrl+C pour quitter les logs
 ```
 
-### Redémarrer l'application
+### Étape 7 : Tester l'application
 
 ```bash
-docker compose restart
+# Tester l'API backend
+curl http://localhost:3001/api/health
+
+# Si ça fonctionne, visiter le site dans un navigateur
+# https://progress2win.com
 ```
-
-### Mettre à jour l'application
-
-```bash
-# Si tu utilises Git
-git pull
-
-# Rebuild et redéployer
-docker compose up -d --build
-```
-
-### Backup de la base de données
-
-```bash
-# Créer un script de backup automatique
-cat > /root/backup-tracky.sh << 'EOF'
-#!/bin/bash
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/root/backups"
-mkdir -p $BACKUP_DIR
-
-# Backup de la DB
-docker cp tracky-backend:/app/data/progress2win.db $BACKUP_DIR/tracky_$DATE.db
-
-# Garder uniquement les 7 derniers backups
-ls -t $BACKUP_DIR/tracky_*.db | tail -n +8 | xargs rm -f
-
-echo "Backup completed: tracky_$DATE.db"
-EOF
-
-chmod +x /root/backup-tracky.sh
-
-# Ajouter au cron (backup quotidien à 3h du matin)
-echo "0 3 * * * /root/backup-tracky.sh" | crontab -
-```
-
-## 🔒 Sécurité supplémentaire
-
-### Changer le port SSH
-
-```bash
-nano /etc/ssh/sshd_config
-# Changer Port 22 en Port 2222
-systemctl restart sshd
-
-# Mettre à jour le pare-feu
-ufw allow 2222/tcp
-ufw delete allow 22/tcp
-```
-
-### Installer Fail2Ban (protection brute force)
-
-```bash
-apt install -y fail2ban
-systemctl enable fail2ban
-systemctl start fail2ban
-```
-
-### Auto-updates de sécurité
-
-```bash
-apt install -y unattended-upgrades
-dpkg-reconfigure --priority=low unattended-upgrades
-```
-
-## 🚨 Troubleshooting
-
-### L'application ne démarre pas
-
-```bash
-# Voir les logs détaillés
-docker compose logs
-
-# Vérifier les ports utilisés
-netstat -tulpn | grep -E '80|443|3001'
-
-# Redémarrer tout
-docker compose down
-docker compose up -d
-```
-
-### Certificat SSL non généré
-
-```bash
-# Vérifier que le DNS pointe bien vers le VPS
-nslookup tracky.com
-
-# Vérifier que le port 80 est ouvert
-ufw status
-
-# Réessayer la génération du certificat
-docker compose down
-# Relancer la commande certbot de l'étape 4
-```
-
-### Base de données perdue
-
-```bash
-# Restaurer depuis un backup
-docker cp /root/backups/tracky_YYYYMMDD_HHMMSS.db tracky-backend:/app/data/progress2win.db
-docker compose restart backend
-```
-
-## 💰 Coûts estimés
-
-- **VPS** : 5-10€/mois (2GB RAM, 1 CPU)
-- **Domaine** : 10-15€/an
-- **SSL** : Gratuit (Let's Encrypt)
-
-**Providers recommandés :**
-- [DigitalOcean](https://www.digitalocean.com/) - 6$/mois
-- [Hetzner](https://www.hetzner.com/) - 4€/mois
-- [OVH](https://www.ovh.com/) - 5€/mois
-- [Scaleway](https://www.scaleway.com/) - 5€/mois
-
-## ✅ Checklist finale
-
-- [ ] VPS configuré avec Ubuntu
-- [ ] Docker et Docker Compose installés
-- [ ] Projet transféré sur le VPS
-- [ ] Fichier .env avec secrets sécurisés
-- [ ] DNS configuré (domaine → IP VPS)
-- [ ] Certificat SSL obtenu
-- [ ] Application déployée et accessible
-- [ ] Pare-feu configuré
-- [ ] Backups automatiques configurés
-- [ ] Monitoring en place
 
 ---
 
-🎉 Ton application est maintenant en ligne et accessible depuis le monde entier !
+## 🎯 Méthode 2 : Mise à jour manuelle (SCP/SFTP)
 
-**URL :** https://tracky.com
+**Utilisez cette méthode si vous n'utilisez pas Git.**
+
+### Étape 1 : Sur votre PC local
+
+#### Option A : Via SCP (PowerShell/Terminal)
+
+```powershell
+# Depuis Windows PowerShell
+scp -r C:\Users\Tiaporo\Desktop\Tracky root@votre-ip-vps:/tmp/progress2win-update
+```
+
+#### Option B : Via FileZilla (SFTP)
+
+1. Ouvrir FileZilla
+2. Se connecter au VPS (SFTP)
+3. Uploader le dossier du projet vers `/tmp/progress2win-update`
+
+### Étape 2 : Sur le VPS
+
+```bash
+# Connexion SSH
+ssh root@votre-ip-vps
+
+# Backup de la base de données
+DATE=$(date +%Y%m%d_%H%M%S)
+mkdir -p /root/backups
+docker cp progress2win-backend:/app/data/progress2win.db /root/backups/progress2win_backup_$DATE.db
+
+# Stopper les containers
+cd /opt/progress2win
+docker compose down
+
+# Sauvegarder l'ancien .env et la DB
+cp .env /root/backups/.env_$DATE
+cp -r backend/data /root/backups/data_$DATE
+
+# Remplacer les fichiers (SAUF .env et backend/data)
+rsync -av --exclude='.env' --exclude='backend/data' --exclude='certbot' /tmp/progress2win-update/ /opt/progress2win/
+
+# Vérifier/mettre à jour .env si besoin
+nano .env
+
+# Rebuild et redémarrer
+docker compose up -d --build
+
+# Vérifier
+docker compose ps
+docker compose logs -f
+```
+
+---
+
+## 🎯 Méthode 3 : Mise à jour Zero-Downtime
+
+**Pour éviter toute interruption de service.**
+
+### Étape 1 : Préparation
+
+```bash
+ssh root@votre-ip-vps
+cd /opt/progress2win
+
+# Backup
+DATE=$(date +%Y%m%d_%H%M%S)
+docker cp progress2win-backend:/app/data/progress2win.db /root/backups/progress2win_backup_$DATE.db
+
+# Récupérer les changements
+git pull origin main
+```
+
+### Étape 2 : Build des nouvelles images en arrière-plan
+
+```bash
+# Build les nouvelles images sans arrêter les anciennes
+docker compose build
+```
+
+### Étape 3 : Rolling update (un service à la fois)
+
+```bash
+# Mettre à jour le backend
+docker compose up -d --no-deps --build backend
+
+# Attendre 10 secondes
+sleep 10
+
+# Vérifier que le backend fonctionne
+docker compose logs backend | tail -20
+
+# Mettre à jour le frontend
+docker compose up -d --no-deps --build frontend
+
+# Vérifier
+docker compose ps
+```
+
+---
+
+## 🔍 Vérifications post-mise à jour
+
+### 1. Vérifier les containers
+
+```bash
+docker compose ps
+# Tous les containers doivent être "Up"
+```
+
+### 2. Vérifier les logs
+
+```bash
+docker compose logs --tail=50
+# Pas d'erreurs critiques
+```
+
+### 3. Tester l'API
+
+```bash
+curl http://localhost:3001/api/health
+# Devrait retourner un status 200
+```
+
+### 4. Tester le frontend
+
+```bash
+curl -I https://progress2win.com
+# Devrait retourner 200 OK
+```
+
+### 5. Tester les fonctionnalités critiques
+
+- Connexion utilisateur
+- Enregistrement de progrès
+- Affichage des graphiques
+- Nouvelle fonctionnalité ajoutée
+
+---
+
+## 🚨 Rollback en cas de problème
+
+**Si quelque chose ne fonctionne pas après la mise à jour :**
+
+### Rollback rapide (Git)
+
+```bash
+cd /opt/progress2win
+
+# Revenir à la version précédente
+git log --oneline -5  # Voir les derniers commits
+git reset --hard COMMIT_ID_PRECEDENT
+
+# Rebuild avec l'ancienne version
+docker compose down
+docker compose up -d --build
+```
+
+### Restaurer depuis un backup
+
+```bash
+# Lister les backups disponibles
+ls -lh /root/backups/
+
+# Restaurer la base de données
+docker cp /root/backups/progress2win_backup_YYYYMMDD_HHMMSS.db progress2win-backend:/app/data/progress2win.db
+
+# Redémarrer le backend
+docker compose restart backend
+```
+
+---
+
+## 📊 Commandes utiles
+
+### Voir l'utilisation des ressources
+
+```bash
+# CPU/RAM des containers
+docker stats
+
+# Espace disque
+df -h
+du -sh /opt/progress2win/*
+```
+
+### Nettoyer Docker (libérer de l'espace)
+
+```bash
+# Supprimer les images inutilisées
+docker image prune -a
+
+# Supprimer tout ce qui est inutilisé (ATTENTION!)
+docker system prune -a --volumes
+```
+
+### Voir les versions déployées
+
+```bash
+# Version du code
+cd /opt/progress2win
+git log -1 --oneline
+
+# Version des images Docker
+docker compose images
+```
+
+---
+
+## 🔄 Automatiser les mises à jour (Avancé)
+
+### Créer un script de mise à jour automatique
+
+```bash
+cat > /root/update-progress2win.sh << 'EOF'
+#!/bin/bash
+
+echo "🔄 Début de la mise à jour Progress2Win..."
+
+cd /opt/progress2win
+
+# Backup
+DATE=$(date +%Y%m%d_%H%M%S)
+echo "📦 Backup de la base de données..."
+docker cp progress2win-backend:/app/data/progress2win.db /root/backups/progress2win_backup_$DATE.db
+
+# Récupérer les changements
+echo "⬇️  Récupération des derniers changements..."
+git pull origin main
+
+# Vérifier si des changements ont été téléchargés
+if [ $? -eq 0 ]; then
+    echo "🔨 Rebuild des containers..."
+    docker compose up -d --build
+
+    echo "✅ Mise à jour terminée !"
+    echo "📊 Status des containers :"
+    docker compose ps
+else
+    echo "❌ Erreur lors du git pull"
+    exit 1
+fi
+
+# Nettoyer les anciennes images
+echo "🧹 Nettoyage des anciennes images..."
+docker image prune -f
+
+echo "🎉 Tout est à jour !"
+EOF
+
+chmod +x /root/update-progress2win.sh
+```
+
+### Utiliser le script
+
+```bash
+# Lancer une mise à jour
+/root/update-progress2win.sh
+```
+
+### Automatiser avec un cron (optionnel)
+
+```bash
+# Mise à jour automatique tous les jours à 4h du matin
+echo "0 4 * * * /root/update-progress2win.sh >> /var/log/progress2win-update.log 2>&1" | crontab -
+
+# Voir les mises à jour planifiées
+crontab -l
+```
+
+---
+
+## ✅ Checklist de mise à jour
+
+- [ ] Backup de la base de données créé
+- [ ] Code source mis à jour (git pull ou upload)
+- [ ] Variables d'environnement vérifiées/mises à jour
+- [ ] Images Docker rebuild
+- [ ] Containers redémarrés
+- [ ] Logs vérifiés (pas d'erreurs)
+- [ ] API testée (curl)
+- [ ] Frontend testé (navigateur)
+- [ ] Fonctionnalités critiques testées
+- [ ] Anciennes images Docker nettoyées
+
+---
+
+## 🆘 Besoin d'aide ?
+
+### Erreurs communes
+
+**"Error: Cannot find module..."**
+```bash
+# Rebuild complet
+docker compose down
+docker compose up -d --build --force-recreate
+```
+
+**"Port already in use"**
+```bash
+# Vérifier les processus
+netstat -tulpn | grep -E '80|443|3001'
+# Tuer le processus ou redémarrer le VPS
+```
+
+**"Database locked"**
+```bash
+# Redémarrer uniquement le backend
+docker compose restart backend
+```
+
+---
+
+🎉 **Mise à jour terminée !** Votre application est maintenant à jour avec les dernières fonctionnalités.

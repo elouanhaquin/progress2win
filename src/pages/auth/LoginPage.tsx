@@ -9,8 +9,8 @@ import { authApi } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().email('Adresse email invalide'),
+  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -60,8 +60,8 @@ export const LoginPage: React.FC = () => {
           <div className="w-20 h-20 bg-primary-500 border-4 border-black shadow-neo-xl mx-auto mb-4 flex items-center justify-center">
             <span className="text-white text-3xl font-black">P2W</span>
           </div>
-          <h1 className="text-3xl font-black text-black">Welcome Back!</h1>
-          <p className="text-neutral-600 font-medium">Sign in to continue your progress</p>
+          <h1 className="text-3xl font-black text-black">Bienvenue!</h1>
+          <p className="text-neutral-600 font-medium">Connecte-toi pour continuer tes progrès</p>
         </div>
 
         <Card>
@@ -74,9 +74,9 @@ export const LoginPage: React.FC = () => {
 
             <div className="space-y-6">
               <Input
-                label="Email Address"
+                label="Adresse email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Entre ton email"
                 icon={<Mail className="w-5 h-5" />}
                 error={errors.email?.message}
                 {...register('email')}
@@ -84,9 +84,9 @@ export const LoginPage: React.FC = () => {
 
               <div className="relative">
                 <Input
-                  label="Password"
+                  label="Mot de passe"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder="Entre ton mot de passe"
                   icon={<Lock className="w-5 h-5" />}
                   error={errors.password?.message}
                   {...register('password')}
@@ -105,7 +105,7 @@ export const LoginPage: React.FC = () => {
                   to="/forgot-password"
                   className="text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors"
                 >
-                  Forgot Password?
+                  Mot de passe oublié?
                 </Link>
               </div>
 
@@ -116,19 +116,19 @@ export const LoginPage: React.FC = () => {
                 loading={isLoading}
                 className="w-full"
               >
-                Sign In
+                Connexion
               </Button>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
-              Don't have an account?{' '}
+              Pas de compte?{' '}
               <Link
                 to="/register"
                 className="font-semibold text-primary-600 hover:text-primary-800 transition-colors"
               >
-                Sign up here
+                Inscris-toi ici
               </Link>
             </p>
           </div>
