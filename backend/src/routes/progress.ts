@@ -70,6 +70,9 @@ router.get('/', authenticate, async (req: AuthRequest, res, next) => {
 router.get('/:progressId', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const progressId = parseInt(req.params.progressId);
+    if (isNaN(progressId)) {
+      return res.status(400).json({ error: 'Invalid progress ID' });
+    }
 
     const result = await query(
       'SELECT * FROM progress WHERE id = ? AND user_id = ?',
@@ -90,6 +93,10 @@ router.get('/:progressId', authenticate, async (req: AuthRequest, res, next) => 
 router.put('/:progressId', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const progressId = parseInt(req.params.progressId);
+    if (isNaN(progressId)) {
+      return res.status(400).json({ error: 'Invalid progress ID' });
+    }
+
     const { category, metric, value, unit, notes, date } = req.body as ProgressUpdate;
 
     // Check if progress exists and belongs to user
@@ -158,6 +165,9 @@ router.put('/:progressId', authenticate, async (req: AuthRequest, res, next) => 
 router.delete('/:progressId', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const progressId = parseInt(req.params.progressId);
+    if (isNaN(progressId)) {
+      return res.status(400).json({ error: 'Invalid progress ID' });
+    }
 
     // Check if progress exists
     const existingResult = await query(

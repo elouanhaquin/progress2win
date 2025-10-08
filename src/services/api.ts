@@ -167,6 +167,14 @@ export const authApi = {
       return await expressClient.get('/auth/me');
     }
   },
+
+  changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
+    if (isTauriBackend()) {
+      return await invoke('change_password', { currentPassword, newPassword });
+    } else {
+      await expressClient.post('/auth/change-password', { currentPassword, newPassword });
+    }
+  },
 };
 
 // User API

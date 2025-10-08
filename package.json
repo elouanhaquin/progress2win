@@ -12,6 +12,8 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
     "@hookform/resolvers": "^3.3.2",
     "@tauri-apps/api": "^2.8.0",
     "clsx": "^2.0.0",

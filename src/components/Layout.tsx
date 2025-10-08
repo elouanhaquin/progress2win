@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from '../stores/authStore';
 import { useAppStore } from '../stores/appStore';
 import { clsx } from 'clsx';
+import { Avatar } from './Avatar';
 
 const navigation = [
   { name: 'Tableau de bord', href: '/', icon: Home },
@@ -72,25 +73,18 @@ export const Sidebar: React.FC = () => {
           {user && (
             <div className="p-4 border-b-2 border-black bg-neutral-50">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm rounded-full flex items-center justify-center">
-                  {user.avatarUrl ? (
-                    <img 
-                      src={user.avatarUrl} 
-                      alt={user.firstName}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-bold text-lg">
-                      {user.firstName}{user.lastName}
-                    </span>
-                  )}
+                <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm rounded-full flex items-center justify-center overflow-hidden">
+                  <Avatar
+                    avatarUrl={user.avatarUrl}
+                    fallback={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
+                    size={48}
+                    className="w-full h-full rounded-full object-cover"
+                    alt={user.firstName}
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-black truncate">
                     {user.firstName} {user.lastName}
-                  </p>
-                  <p className="text-xs text-neutral-600 truncate">
-                    {user.email}
                   </p>
                 </div>
               </div>
@@ -173,9 +167,6 @@ export const Header: React.FC = () => {
               <div className="text-right">
                 <p className="text-sm font-semibold text-black">
                   {user.firstName} {user.lastName}
-                </p>
-                <p className="text-xs text-neutral-600">
-                  {user.email}
                 </p>
               </div>
               <button

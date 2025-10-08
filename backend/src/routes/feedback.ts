@@ -1,10 +1,16 @@
 import express from 'express';
 import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
+import { escape } from 'html-escaper';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { query } from '../database/db.js';
 
 const router = express.Router();
+
+// Helper function to escape HTML and convert newlines to <br>
+const escapeAndFormatText = (text: string): string => {
+  return escape(text).replace(/\n/g, '<br>');
+};
 
 // Initialize Mailgun
 const mailgun = new Mailgun(FormData);
@@ -84,14 +90,14 @@ router.post('/', authenticate, async (req: AuthRequest, res) => {
             ${feedback ? `
             <div class="section">
               <div class="label">💭 Avis général</div>
-              <div class="value">${feedback.replace(/\n/g, '<br>')}</div>
+              <div class="value">${escapeAndFormatText(feedback)}</div>
             </div>
             ` : ''}
 
             ${suggestions ? `
             <div class="section">
               <div class="label">💡 Suggestions de fonctionnalités</div>
-              <div class="value">${suggestions.replace(/\n/g, '<br>')}</div>
+              <div class="value">${escapeAndFormatText(suggestions)}</div>
             </div>
             ` : ''}
 

@@ -35,7 +35,7 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting
+// Rate limiting - Global
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
@@ -43,6 +43,31 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 app.use('/api/', limiter);
+
+// Rate limiting - Specific for auth endpoints
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: 'Trop de tentatives de connexion, réessayez dans 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  message: 'Trop de demandes de réinitialisation, réessayez dans 1 heure',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours
+  max: 3,
+  message: 'Trop de créations de compte, réessayez demain',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Body parsing middleware
 app.use(express.json());
@@ -57,6 +82,11 @@ if (process.env.NODE_ENV !== 'production') {
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Apply specific rate limiters to auth endpoints
+app.use('/api/auth/login', loginLimiter);
+app.use('/api/auth/forgot-password', forgotPasswordLimiter);
+app.use('/api/auth/register', registerLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);

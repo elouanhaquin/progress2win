@@ -35,6 +35,7 @@ export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
+  passwordResetRequired?: boolean;
 }
 
 export interface Progress {

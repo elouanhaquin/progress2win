@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, User, Bell, Shield, Palette, Save } from 'lucide-react';
 import { Card, Button, Input, Alert } from '../components/UI';
 import { useAuthStore } from '../stores/authStore';
 import { userApi } from '../services/api';
+import { AvatarPicker } from '../components/AvatarPicker';
+import { Avatar } from '../components/Avatar';
 
 const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuthStore();
@@ -12,13 +14,34 @@ const SettingsPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Profile form state
-  const [firstName, setFirstName] = useState(user?.firstName || '');
-  const [lastName, setLastName] = useState(user?.lastName || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  // Update form when user data changes
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setEmail(user.email || '');
+      setAvatarUrl(user.avatarUrl || '');
+    }
+  }, [user]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
+
+    // Validation
+    if (!firstName?.trim()) {
+      setError('Le prénom est requis');
+      return;
+    }
+
+    if (!lastName?.trim()) {
+      setError('Le nom est requis');
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -26,14 +49,16 @@ const SettingsPage: React.FC = () => {
       setSuccess(null);
 
       const updatedUser = await userApi.updateProfile(user.id, {
-        firstName,
-        lastName,
-        email,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         avatarUrl,
       });
 
       updateUser(updatedUser);
       setSuccess('Profil mis à jour avec succès!');
+
+      // Force update of avatar URL in local state
+      setAvatarUrl(updatedUser.avatarUrl || '');
     } catch (err: any) {
       setError(err.message || 'Échec de la mise à jour du profil');
     } finally {
@@ -115,18 +140,39 @@ const SettingsPage: React.FC = () => {
             <Card>
               <h2 className="text-2xl font-black text-black mb-6">Paramètres du profil</h2>
               <div className="space-y-6">
+                {/* Current Avatar Display */}
+                <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
+                  <div className="w-16 h-16 border-2 border-black overflow-hidden bg-white flex items-center justify-center">
+                    <Avatar
+                      avatarUrl={avatarUrl}
+                      fallback={`${firstName?.[0] || ''}${lastName?.[0] || ''}`}
+                      size={64}
+                      className="w-full h-full object-cover"
+                      alt="Avatar actuel"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-black">Avatar actuel</h3>
+                    <p className="text-sm text-neutral-600">
+                      {firstName} {lastName}
+                    </p>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Prénom"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
+                    required
                   />
                   <Input
                     label="Nom"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
+                    required
                   />
                 </div>
                 <Input
@@ -135,13 +181,17 @@ const SettingsPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="john@example.com"
+                  disabled
                 />
-                <Input
-                  label="URL de l'avatar"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                />
+
+                {/* Avatar Picker */}
+                <div className="border-2 border-black p-6 bg-white">
+                  <AvatarPicker
+                    seed={user?.email || 'default'}
+                    currentAvatarUrl={avatarUrl}
+                    onAvatarSelect={setAvatarUrl}
+                  />
+                </div>
               </div>
             </Card>
           )}

@@ -8,6 +8,10 @@ const router = Router();
 router.get('/user/:friendId', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const friendId = parseInt(req.params.friendId);
+    if (isNaN(friendId)) {
+      return res.status(400).json({ error: 'Invalid friend ID' });
+    }
+
     const { category, startDate, endDate } = req.query;
 
     // Check if users are friends
@@ -30,20 +34,19 @@ router.get('/user/:friendId', authenticate, async (req: AuthRequest, res, next) 
       WHERE p.user_id IN (?, ?)
     `;
     const values: any[] = [req.userId, friendId];
-    let paramCount = 3;
 
     if (category) {
-      progressQuery += ` AND p.category = $${paramCount++}`;
+      progressQuery += ` AND p.category = ?`;
       values.push(category);
     }
 
     if (startDate) {
-      progressQuery += ` AND p.date >= $${paramCount++}`;
+      progressQuery += ` AND p.date >= ?`;
       values.push(startDate);
     }
 
     if (endDate) {
-      progressQuery += ` AND p.date <= $${paramCount++}`;
+      progressQuery += ` AND p.date <= ?`;
       values.push(endDate);
     }
 
@@ -51,14 +54,19 @@ router.get('/user/:friendId', authenticate, async (req: AuthRequest, res, next) 
 
     const progressResult = await query(progressQuery, values);
 
-    // Get user details
-    const usersResult = await query(
-      'SELECT id, email, first_name, last_name, avatar_url FROM users WHERE id IN (?, ?)',
-      [req.userId, friendId]
+    // Get user details - separate queries to control email visibility
+    const currentUserResult = await query(
+      'SELECT id, email, first_name, last_name, avatar_url FROM users WHERE id = ?',
+      [req.userId]
     );
 
-    const currentUser = usersResult.rows.find((u) => u.id === req.userId);
-    const friend = usersResult.rows.find((u) => u.id === friendId);
+    const friendResult = await query(
+      'SELECT id, first_name, last_name, avatar_url FROM users WHERE id = ?',
+      [friendId]
+    );
+
+    const currentUser = currentUserResult.rows[0];
+    const friend = friendResult.rows[0];
 
     const currentUserProgress = progressResult.rows.filter((p) => p.user_id === req.userId);
     const friendProgress = progressResult.rows.filter((p) => p.user_id === friendId);
@@ -107,7 +115,7 @@ router.post('/invite', authenticate, async (req: AuthRequest, res, next) => {
     // Check if friendship already exists
     const existingFriendship = await query(
       'SELECT * FROM user_friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)',
-      [req.userId, friendId]
+      [req.userId, friendId, friendId, req.userId]
     );
 
     if (existingFriendship.rows.length > 0) {
@@ -138,8 +146,8 @@ router.get('/leaderboard', authenticate, async (req: AuthRequest, res, next) => 
     const { category, startDate, endDate, limit = '10' } = req.query;
 
     let leaderboardQuery = `
-      SELECT 
-        u.id, u.email, u.first_name, u.last_name, u.avatar_url,
+      SELECT
+        u.id, u.first_name, u.last_name, u.avatar_url,
         COUNT(p.id) as total_entries,
         SUM(p.value) as total_progress
       FROM users u
@@ -148,27 +156,26 @@ router.get('/leaderboard', authenticate, async (req: AuthRequest, res, next) => 
     `;
 
     const values: any[] = [];
-    let paramCount = 1;
 
     if (category) {
-      leaderboardQuery += ` AND p.category = $${paramCount++}`;
+      leaderboardQuery += ` AND p.category = ?`;
       values.push(category);
     }
 
     if (startDate) {
-      leaderboardQuery += ` AND p.date >= $${paramCount++}`;
+      leaderboardQuery += ` AND p.date >= ?`;
       values.push(startDate);
     }
 
     if (endDate) {
-      leaderboardQuery += ` AND p.date <= $${paramCount++}`;
+      leaderboardQuery += ` AND p.date <= ?`;
       values.push(endDate);
     }
 
     leaderboardQuery += `
-      GROUP BY u.id, u.email, u.first_name, u.last_name, u.avatar_url
+      GROUP BY u.id, u.first_name, u.last_name, u.avatar_url
       ORDER BY total_progress DESC
-      LIMIT $${paramCount++}
+      LIMIT ?
     `;
     values.push(limit);
 
@@ -177,7 +184,6 @@ router.get('/leaderboard', authenticate, async (req: AuthRequest, res, next) => 
     const leaderboard = result.rows.map((row, index) => ({
       user: {
         id: row.id,
-        email: row.email,
         first_name: row.first_name,
         last_name: row.last_name,
         avatar_url: row.avatar_url,
