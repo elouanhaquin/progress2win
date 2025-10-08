@@ -74,26 +74,25 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full bg-[#FFF5E1]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-black">Paramètres</h1>
-            <p className="text-lg text-neutral-700 mt-2">
+            <h1 className="text-3xl sm:text-4xl font-display text-black">Paramètres</h1>
+            <p className="text-base sm:text-lg text-black/70 mt-1">
               Personnalise ton expérience Progress2Win
             </p>
           </div>
           {activeTab === 'profile' && (
-            <Button
-              variant="primary"
-              size="lg"
-              icon={<Save className="w-5 h-5" />}
+            <button
               onClick={handleSaveProfile}
-              loading={isLoading}
+              disabled={isLoading}
+              className="w-full sm:w-auto bg-[#9D4EDD] border-2 border-black rounded-xl font-semibold text-white py-3 px-5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sauvegarder
-            </Button>
+              <Save className="w-5 h-5" />
+              {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+            </button>
           )}
         </div>
 
@@ -109,26 +108,26 @@ const SettingsPage: React.FC = () => {
           </Alert>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white border-2 border-black shadow-neo p-6">
-            <nav className="space-y-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-4 py-3 text-sm font-semibold transition-all duration-200 border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 ${
-                      activeTab === tab.id
-                        ? 'bg-primary-500 text-white border-primary-700'
-                        : 'bg-white text-black hover:bg-neutral-50'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5 mr-3" />
-                    {tab.label}
-                  </button>
+            <div className="bg-white border-3 border-black rounded-2xl p-5 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+              <nav className="space-y-2">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center px-4 py-3 text-sm font-semibold transition-all duration-150 border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] ${
+                        activeTab === tab.id
+                          ? 'bg-[#9D4EDD] text-white'
+                          : 'bg-white text-black hover:bg-[#FFF5E1]'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 mr-3" />
+                      {tab.label}
+                    </button>
                   );
                 })}
               </nav>
@@ -138,158 +137,162 @@ const SettingsPage: React.FC = () => {
           {/* Content */}
           <div className="lg:col-span-3">
             {activeTab === 'profile' && (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
-                <h2 className="text-2xl font-black text-black mb-6">Paramètres du profil</h2>
-              <div className="space-y-6">
-                {/* Current Avatar Display */}
-                <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
-                  <div className="w-16 h-16 border-2 border-black overflow-hidden bg-white flex items-center justify-center">
-                    <Avatar
-                      avatarUrl={avatarUrl}
-                      fallback={`${firstName?.[0] || ''}${lastName?.[0] || ''}`}
-                      size={64}
-                      className="w-full h-full object-cover"
-                      alt="Avatar actuel"
+              <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                <h2 className="text-xl sm:text-2xl font-display text-black mb-5">Paramètres du profil</h2>
+                <div className="space-y-5">
+                  {/* Current Avatar Display */}
+                  <div className="flex items-center gap-4 p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
+                    <div className="w-16 h-16 border-2 border-black rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                      <Avatar
+                        avatarUrl={avatarUrl}
+                        fallback={`${firstName?.[0] || ''}${lastName?.[0] || ''}`}
+                        size={64}
+                        className="w-full h-full object-cover"
+                        alt="Avatar actuel"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-black">Avatar actuel</h3>
+                      <p className="text-sm text-black/60">
+                        {firstName} {lastName}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-black mb-2">Prénom</label>
+                      <input
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="John"
+                        className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-black mb-2">Nom</label>
+                      <input
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Doe"
+                        className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-black mb-2">Adresse email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="john@example.com"
+                      disabled
+                      className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] bg-black/5 text-black/60 cursor-not-allowed"
                     />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-black">Avatar actuel</h3>
-                    <p className="text-sm text-neutral-600">
-                      {firstName} {lastName}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Prénom"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="John"
-                    required
-                  />
-                  <Input
-                    label="Nom"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Doe"
-                    required
-                  />
-                </div>
-                <Input
-                  label="Adresse email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="john@example.com"
-                  disabled
-                />
-
-                {/* Avatar Picker */}
-                <div className="border-2 border-black p-6 bg-white">
-                  <AvatarPicker
-                    seed={user?.email || 'default'}
-                    currentAvatarUrl={avatarUrl}
-                    onAvatarSelect={setAvatarUrl}
-                  />
+                  {/* Avatar Picker */}
+                  <div className="border-2 border-black rounded-xl p-5 bg-[#FFF5E1]">
+                    <AvatarPicker
+                      seed={user?.email || 'default'}
+                      currentAvatarUrl={avatarUrl}
+                      onAvatarSelect={setAvatarUrl}
+                    />
                   </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'notifications' && (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
-                <h2 className="text-2xl font-black text-black mb-6">Préférences de notification</h2>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                <h2 className="text-xl sm:text-2xl font-display text-black mb-5">Préférences de notification</h2>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
                     <div>
                       <h3 className="font-semibold text-black">Notifications email</h3>
-                      <p className="text-sm text-neutral-600">Reçois des mises à jour par email</p>
+                      <p className="text-sm text-black/60">Reçois des mises à jour par email</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                      <div className="w-11 h-6 bg-white peer-focus:outline-none border-2 border-black rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9D4EDD] peer-checked:after:bg-white"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
+                  <div className="flex items-center justify-between p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
                     <div>
                       <h3 className="font-semibold text-black">Rappels d'objectifs</h3>
-                      <p className="text-sm text-neutral-600">Reçois des rappels pour tes objectifs</p>
+                      <p className="text-sm text-black/60">Reçois des rappels pour tes objectifs</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                      <div className="w-11 h-6 bg-white peer-focus:outline-none border-2 border-black rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9D4EDD] peer-checked:after:bg-white"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
+                  <div className="flex items-center justify-between p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
                     <div>
                       <h3 className="font-semibold text-black">Mises à jour des amis</h3>
-                      <p className="text-sm text-neutral-600">Notifications sur les activités des amis</p>
+                      <p className="text-sm text-black/60">Notifications sur les activités des amis</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                      <div className="w-11 h-6 bg-white peer-focus:outline-none border-2 border-black rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9D4EDD] peer-checked:after:bg-white"></div>
                     </label>
-                  </div>
                   </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'privacy' && (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
-                <h2 className="text-2xl font-black text-black mb-6">Paramètres de confidentialité</h2>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                <h2 className="text-xl sm:text-2xl font-display text-black mb-5">Paramètres de confidentialité</h2>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
                     <div>
                       <h3 className="font-semibold text-black">Profil public</h3>
-                      <p className="text-sm text-neutral-600">Permet aux autres de voir tes progrès</p>
+                      <p className="text-sm text-black/60">Permet aux autres de voir tes progrès</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                      <div className="w-11 h-6 bg-white peer-focus:outline-none border-2 border-black rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9D4EDD] peer-checked:after:bg-white"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
+                  <div className="flex items-center justify-between p-4 bg-[#FFF5E1] border-2 border-black rounded-xl">
                     <div>
                       <h3 className="font-semibold text-black">Participation au classement</h3>
-                      <p className="text-sm text-neutral-600">Inclure tes données dans les classements</p>
+                      <p className="text-sm text-black/60">Inclure tes données dans les classements</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                      <div className="w-11 h-6 bg-white peer-focus:outline-none border-2 border-black rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-black after:border-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#9D4EDD] peer-checked:after:bg-white"></div>
                     </label>
-                  </div>
                   </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'appearance' && (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
-                <h2 className="text-2xl font-black text-black mb-6">Apparence</h2>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-black mb-4">Thème</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button className="p-4 bg-white border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
-                        <div className="text-center">
-                          <div className="w-8 h-8 bg-neutral-900 mx-auto mb-2"></div>
-                          <p className="font-semibold text-black">Clair</p>
-                        </div>
-                      </button>
-                      <button className="p-4 bg-neutral-50 border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
-                        <div className="text-center">
-                          <div className="w-8 h-8 bg-neutral-100 border-2 border-black mx-auto mb-2"></div>
-                          <p className="font-semibold text-black">Sombre</p>
-                        </div>
-                      </button>
-                    </div>
+              <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                <h2 className="text-xl sm:text-2xl font-display text-black mb-5">Apparence</h2>
+                <div>
+                  <h3 className="text-lg font-semibold text-black mb-4">Thème</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button className="p-4 bg-white border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150">
+                      <div className="text-center">
+                        <div className="w-8 h-8 bg-[#FFD93D] border-2 border-black rounded-lg mx-auto mb-2"></div>
+                        <p className="font-semibold text-black">Clair</p>
+                      </div>
+                    </button>
+                    <button className="p-4 bg-[#FFF5E1] border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150">
+                      <div className="text-center">
+                        <div className="w-8 h-8 bg-[#9D4EDD] border-2 border-black rounded-lg mx-auto mb-2"></div>
+                        <p className="font-semibold text-black">Sombre</p>
+                      </div>
+                    </button>
                   </div>
                 </div>
               </div>

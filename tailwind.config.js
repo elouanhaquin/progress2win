@@ -81,7 +81,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        'display': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Poppins', 'sans-serif'],
         'body': ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
@@ -103,6 +103,10 @@ module.exports = {
         '18': '4.5rem',
         '88': '22rem',
         '128': '32rem',
+      },
+      borderWidth: {
+        '3': '3px',
+        '4': '4px',
       },
       borderRadius: {
         'none': '0',
