@@ -8,7 +8,7 @@ import { Button, Input, Card, Alert } from '../../components/UI';
 import { authApi } from '../../services/api';
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().email('Adresse email invalide'),
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -34,7 +34,7 @@ export const ForgotPasswordPage: React.FC = () => {
       await authApi.forgotPassword(data.email);
       setIsSubmitted(true);
     } catch (err: any) {
-      setError(err.message || 'Failed to send reset email');
+      setError(err.message || 'Échec de l\'envoi de l\'email de réinitialisation');
     } finally {
       setIsLoading(false);
     }
@@ -48,20 +48,20 @@ export const ForgotPasswordPage: React.FC = () => {
             <div className="w-20 h-20 bg-success-500 border-4 border-black shadow-neo-xl mx-auto mb-4 flex items-center justify-center">
               <Mail className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl font-black text-black">Check Your Email!</h1>
-            <p className="text-neutral-600 font-medium">We've sent you a password reset link</p>
+            <h1 className="text-3xl font-black text-black">Vérifie ton email!</h1>
+            <p className="text-neutral-600 font-medium">Nous t'avons envoyé un lien de réinitialisation</p>
           </div>
 
           <Card>
             <div className="text-center space-y-6">
               <Alert variant="success">
-                If an account with that email exists, we've sent you a password reset link.
+                Si un compte avec cet email existe, nous t'avons envoyé un lien de réinitialisation.
               </Alert>
               
               <div className="space-y-4">
                 <Link to="/login">
                   <Button variant="primary" className="w-full">
-                    Back to Login
+                    Retour à la connexion
                   </Button>
                 </Link>
                 
@@ -69,7 +69,7 @@ export const ForgotPasswordPage: React.FC = () => {
                   onClick={() => setIsSubmitted(false)}
                   className="text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors"
                 >
-                  Try a different email
+                  Essayer un autre email
                 </button>
               </div>
             </div>
@@ -87,8 +87,8 @@ export const ForgotPasswordPage: React.FC = () => {
           <div className="w-20 h-20 bg-secondary-500 border-4 border-black shadow-neo-xl mx-auto mb-4 flex items-center justify-center">
             <span className="text-white text-3xl font-black">P2W</span>
           </div>
-          <h1 className="text-3xl font-black text-black">Forgot Password?</h1>
-          <p className="text-neutral-600 font-medium">No worries, we'll send you reset instructions</p>
+          <h1 className="text-3xl font-black text-black">Mot de passe oublié?</h1>
+          <p className="text-neutral-600 font-medium">Pas de souci, on t'envoie les instructions</p>
         </div>
 
         <Card>
@@ -101,9 +101,9 @@ export const ForgotPasswordPage: React.FC = () => {
 
             <div className="space-y-6">
               <Input
-                label="Email Address"
+                label="Adresse email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Entre ton email"
                 icon={<Mail className="w-5 h-5" />}
                 error={errors.email?.message}
                 {...register('email')}
@@ -116,7 +116,7 @@ export const ForgotPasswordPage: React.FC = () => {
                 loading={isLoading}
                 className="w-full"
               >
-                Send Reset Link
+                Envoyer le lien
               </Button>
             </div>
           </form>
@@ -127,7 +127,7 @@ export const ForgotPasswordPage: React.FC = () => {
               className="inline-flex items-center text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Login
+              Retour à la connexion
             </Link>
           </div>
         </Card>

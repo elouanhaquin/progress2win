@@ -26,7 +26,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onGroupSelect 
       const data = await groupsApi.getMyGroups();
       setGroups(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to load groups');
+      setError(err.message || 'Échec du chargement des groupes');
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +40,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onGroupSelect 
         onGroupSelect(group);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load group details');
+      setError(err.message || 'Échec du chargement des détails du groupe');
     }
   };
 
@@ -129,7 +129,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onGroupSelect 
           </div>
           <div>
             <p className="text-sm font-bold text-black mb-2">
-              Members ({selectedGroup.members.length})
+              Membres ({selectedGroup.members.length})
             </p>
             <div className="space-y-2">
               {selectedGroup.members.map((member) => (
@@ -220,7 +220,7 @@ const GroupCard: React.FC<{
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-neutral-600" />
-          <span className="font-semibold text-black">{group.member_count || 0} members</span>
+          <span className="font-semibold text-black">{group.member_count || 0} membres</span>
         </div>
         <CodeDisplay code={group.code} compact />
       </div>
@@ -275,7 +275,7 @@ const CreateGroupModal: React.FC<{
       await groupsApi.create({ name: name.trim(), description: description.trim() || undefined });
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Failed to create group');
+      setError(err.message || 'Échec de la création du groupe');
     } finally {
       setIsLoading(false);
     }
@@ -348,7 +348,7 @@ const JoinGroupModal: React.FC<{
       await groupsApi.join(code.trim().toUpperCase());
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Failed to join group');
+      setError(err.message || 'Échec de l\'entrée dans le groupe');
     } finally {
       setIsLoading(false);
     }

@@ -4,6 +4,9 @@ import { useAuthStore } from './stores/authStore';
 import { Layout } from './components/Layout';
 import { LoadingSpinner } from './components/UI';
 
+// Public Pages
+import { LandingPage } from './pages/LandingPage';
+
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
@@ -18,27 +21,43 @@ const ComparePage = React.lazy(() => import('./pages/ComparePage'));
 const LeaderboardPage = React.lazy(() => import('./pages/LeaderboardPage'));
 const GoalsPage = React.lazy(() => import('./pages/GoalsPage'));
 const SettingsPage = React.lazy(() => import('./pages/SettingsPage'));
+const FeedbackPage = React.lazy(() => import('./pages/FeedbackPage'));
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
 // Public Route Component (redirect if authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
-  
+
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
-  
+
   return <>{children}</>;
+};
+
+// Home Route Component (shows landing or dashboard based on auth)
+const HomeRoute: React.FC = () => {
+  const { isAuthenticated } = useAuthStore();
+
+  if (isAuthenticated) {
+    return (
+      <Layout>
+        <DashboardPage />
+      </Layout>
+    );
+  }
+
+  return <LandingPage />;
 };
 
 // Loading Component
@@ -52,6 +71,9 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Routes>
+        {/* Home Route - Landing or Dashboard based on auth */}
+        <Route path="/" element={<HomeRoute />} />
+
         {/* Public Routes */}
         <Route
           path="/login"
@@ -78,9 +100,9 @@ const App: React.FC = () => {
           }
         />
 
-        {/* Protected Routes */}
+        {/* Dashboard Route (for redirects) */}
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Layout>
@@ -149,6 +171,19 @@ const App: React.FC = () => {
               <Layout>
                 <React.Suspense fallback={<PageLoading />}>
                   <SettingsPage />
+                </React.Suspense>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <React.Suspense fallback={<PageLoading />}>
+                  <FeedbackPage />
                 </React.Suspense>
               </Layout>
             </ProtectedRoute>

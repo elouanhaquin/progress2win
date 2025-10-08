@@ -127,15 +127,15 @@ export const DashboardPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-black text-black">
-            Welcome back, {user.firstName}! 👋
+            Bienvenue, {user.firstName}! 👋
           </h1>
           <p className="text-lg text-neutral-600 font-medium mt-2">
-            Ready to crush your goals today?
+            Prêt à atteindre tes objectifs aujourd'hui?
           </p>
         </div>
         <Link to="/progress/add">
           <Button variant="accent" size="lg" icon={<Plus className="w-5 h-5" />}>
-            Add Progress
+            Ajouter Progrès
           </Button>
         </Link>
       </div>
@@ -145,9 +145,9 @@ export const DashboardPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">This Week</p>
+              <p className="text-sm font-semibold text-neutral-600">Cette semaine</p>
               <p className="text-3xl font-black text-black">{weeklyStats.entries}</p>
-              <p className="text-xs text-neutral-500">entries logged</p>
+              <p className="text-xs text-neutral-500">entrées</p>
             </div>
             <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
               <Calendar className="w-6 h-6 text-white" />
@@ -158,9 +158,9 @@ export const DashboardPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">Categories</p>
+              <p className="text-sm font-semibold text-neutral-600">Catégories</p>
               <p className="text-3xl font-black text-black">{weeklyStats.categories.size}</p>
-              <p className="text-xs text-neutral-500">active areas</p>
+              <p className="text-xs text-neutral-500">actives</p>
             </div>
             <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
               <Target className="w-6 h-6 text-white" />
@@ -171,11 +171,11 @@ export const DashboardPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">Avg Value</p>
+              <p className="text-sm font-semibold text-neutral-600">Valeur moy.</p>
               <p className="text-3xl font-black text-black">
                 {weeklyStats.avgValue.toFixed(1)}
               </p>
-              <p className="text-xs text-neutral-500">this week</p>
+              <p className="text-xs text-neutral-500">cette semaine</p>
             </div>
             <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-black" />
@@ -186,9 +186,9 @@ export const DashboardPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">Goals</p>
+              <p className="text-sm font-semibold text-neutral-600">Objectifs</p>
               <p className="text-3xl font-black text-black">{user.goals.length}</p>
-              <p className="text-xs text-neutral-500">set targets</p>
+              <p className="text-xs text-neutral-500">définis</p>
             </div>
             <div className="w-12 h-12 bg-success-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
               <Trophy className="w-6 h-6 text-white" />
@@ -203,7 +203,7 @@ export const DashboardPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Chart */}
           <Card>
-            <h2 className="text-2xl font-black text-black mb-6">Activity Overview (Last 7 Days)</h2>
+            <h2 className="text-2xl font-black text-black mb-6">Aperçu d'activité (7 derniers jours)</h2>
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <LoadingSpinner />
@@ -263,7 +263,7 @@ export const DashboardPage: React.FC = () => {
                       strokeWidth={4}
                       fillOpacity={1}
                       fill="url(#colorEntries)"
-                      name="Entries"
+                      name="Entrées"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -271,7 +271,7 @@ export const DashboardPage: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
-                <p className="text-neutral-600">No data for the last 7 days</p>
+                <p className="text-neutral-600">Aucune donnée pour les 7 derniers jours</p>
               </div>
             )}
           </Card>
@@ -279,10 +279,10 @@ export const DashboardPage: React.FC = () => {
           {/* Recent Progress */}
           <Card>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-black text-black">Recent Progress</h2>
+              <h2 className="text-2xl font-black text-black">Progrès récents</h2>
               <Link to="/progress">
                 <Button variant="neutral" size="sm">
-                  View All
+                  Voir tout
                 </Button>
               </Link>
             </div>
@@ -327,11 +327,11 @@ export const DashboardPage: React.FC = () => {
                 <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
                   <BarChart3 className="w-8 h-8 text-neutral-500" />
                 </div>
-                <h3 className="text-lg font-bold text-black mb-2">No Progress Yet</h3>
-                <p className="text-neutral-600 mb-4">Start tracking your fitness progress today!</p>
+                <h3 className="text-lg font-bold text-black mb-2">Aucun progrès encore</h3>
+                <p className="text-neutral-600 mb-4">Commence à suivre tes progrès fitness aujourd'hui!</p>
                 <Link to="/progress">
                   <Button variant="primary">
-                    Add Your First Entry
+                    Ajouter ta première entrée
                   </Button>
                 </Link>
               </div>
@@ -343,24 +343,24 @@ export const DashboardPage: React.FC = () => {
         <div className="space-y-6">
           {/* Quick Actions */}
           <Card>
-            <h3 className="text-xl font-black text-black mb-4">Quick Actions</h3>
+            <h3 className="text-xl font-black text-black mb-4">Actions rapides</h3>
             <div className="space-y-3">
               <Link to="/progress" className="block">
                 <Button variant="primary" className="w-full justify-start">
                   <Plus className="w-4 h-4 mr-2" />
-                  Log Progress
+                  Ajouter Progrès
                 </Button>
               </Link>
               <Link to="/compare" className="block">
                 <Button variant="secondary" className="w-full justify-start">
                   <Users className="w-4 h-4 mr-2" />
-                  Compare Progress
+                  Comparer Progrès
                 </Button>
               </Link>
               <Link to="/leaderboard" className="block">
                 <Button variant="accent" className="w-full justify-start">
                   <Trophy className="w-4 h-4 mr-2" />
-                  View Leaderboard
+                  Voir Classement
                 </Button>
               </Link>
             </div>
@@ -369,10 +369,10 @@ export const DashboardPage: React.FC = () => {
           {/* Goals */}
           <Card>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-black">Your Fitness Goals</h3>
+              <h3 className="text-xl font-black text-black">Tes objectifs fitness</h3>
               <Link to="/settings">
                 <Button variant="neutral" size="sm">
-                  Edit
+                  Modifier
                 </Button>
               </Link>
             </div>
@@ -391,10 +391,10 @@ export const DashboardPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-sm text-neutral-600 mb-3">No fitness goals set yet</p>
+                <p className="text-sm text-neutral-600 mb-3">Aucun objectif défini</p>
                 <Link to="/settings">
                   <Button variant="primary" size="sm">
-                    Set Goals
+                    Définir Objectifs
                   </Button>
                 </Link>
               </div>

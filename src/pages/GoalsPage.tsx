@@ -46,7 +46,7 @@ const GoalsPage: React.FC = () => {
         setProgress(allProgress);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load goals');
+      setError(err.message || 'Échec du chargement des objectifs');
     } finally {
       setIsLoading(false);
     }
@@ -139,9 +139,9 @@ const GoalsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-black">Goals</h1>
+          <h1 className="text-4xl font-black text-black">Objectifs</h1>
           <p className="text-lg text-neutral-600 font-medium mt-2">
-            Set targets and track your progress
+            Définis tes objectifs et suis tes progrès
           </p>
         </div>
         <Button
@@ -149,7 +149,7 @@ const GoalsPage: React.FC = () => {
           icon={<Plus className="w-4 h-4" />}
           onClick={() => setShowCreateModal(true)}
         >
-          Add Goal
+          Ajouter un objectif
         </Button>
       </div>
 
@@ -163,10 +163,10 @@ const GoalsPage: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <Target className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">No Goals Yet</h3>
-            <p className="text-neutral-600 mb-4">Set your first fitness goal and start tracking!</p>
+            <h3 className="text-lg font-bold text-black mb-2">Aucun objectif</h3>
+            <p className="text-neutral-600 mb-4">Définis ton premier objectif fitness et commence à suivre!</p>
             <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-              Create Goal
+              Créer un objectif
             </Button>
           </div>
         </Card>
@@ -236,7 +236,7 @@ const GoalsPage: React.FC = () => {
                   <div className="flex items-center gap-2 text-neutral-600">
                     <Calendar className="w-4 h-4" />
                     <span className="font-semibold">
-                      {daysRemaining > 0 ? `${daysRemaining} days left` : 'Deadline passed'}
+                      {daysRemaining > 0 ? `${daysRemaining} jours restants` : 'Échéance dépassée'}
                     </span>
                   </div>
                   {trend !== 'neutral' && (
@@ -244,7 +244,7 @@ const GoalsPage: React.FC = () => {
                       trend === 'up' ? 'text-success-600' : 'text-danger-600'
                     }`}>
                       <TrendingUp className={`w-4 h-4 ${trend === 'down' ? 'rotate-180' : ''}`} />
-                      <span>{trend === 'up' ? 'Improving' : 'Declining'}</span>
+                      <span>{trend === 'up' ? 'En progression' : 'En baisse'}</span>
                     </div>
                   )}
                 </div>
@@ -282,7 +282,7 @@ const GoalsPage: React.FC = () => {
                           strokeWidth={3}
                           strokeDasharray="5 5"
                           label={{
-                            value: 'Target',
+                            value: 'Cible',
                             position: 'right',
                             fill: '#10b981',
                             fontWeight: 800,
@@ -303,7 +303,7 @@ const GoalsPage: React.FC = () => {
                   <div className="border-4 border-black bg-neutral-50 p-8 text-center">
                     <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-2" />
                     <p className="text-sm text-neutral-600 font-medium">
-                      No progress data yet. Start logging!
+                      Aucune donnée de progrès. Commence à enregistrer!
                     </p>
                   </div>
                 )}
@@ -312,7 +312,7 @@ const GoalsPage: React.FC = () => {
                 {progressPercent >= 100 && (
                   <div className="mt-4 p-3 bg-success-500 border-2 border-black shadow-neo-sm flex items-center gap-2">
                     <Award className="w-5 h-5 text-black" />
-                    <span className="font-black text-black">Goal Achieved! 🎉</span>
+                    <span className="font-black text-black">Objectif atteint! 🎉</span>
                   </div>
                 )}
               </Card>
@@ -358,7 +358,7 @@ const CreateGoalModal: React.FC<{
     e.preventDefault();
 
     if (!category || !metric || !currentValue || !targetValue || !unit || !deadline) {
-      setError('All fields are required');
+      setError('Tous les champs sont requis');
       return;
     }
 
@@ -366,7 +366,7 @@ const CreateGoalModal: React.FC<{
     const target = parseFloat(targetValue);
 
     if (isNaN(current) || isNaN(target)) {
-      setError('Values must be numbers');
+      setError('Les valeurs doivent être des nombres');
       return;
     }
 
@@ -390,7 +390,7 @@ const CreateGoalModal: React.FC<{
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Create Goal</h2>
+        <h2 className="text-2xl font-black text-black mb-6">Créer un objectif</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <Alert variant="danger">{error}</Alert>}
@@ -398,7 +398,7 @@ const CreateGoalModal: React.FC<{
           {/* Category */}
           <div>
             <label className="block text-sm font-bold text-black mb-2">
-              Category *
+              Catégorie *
             </label>
             <select
               value={category}
@@ -406,7 +406,7 @@ const CreateGoalModal: React.FC<{
               className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium"
               required
             >
-              <option value="">Select a category</option>
+              <option value="">Sélectionne une catégorie</option>
               {PROGRESS_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ')}
@@ -418,7 +418,7 @@ const CreateGoalModal: React.FC<{
           {/* Metric */}
           <div>
             <label className="block text-sm font-bold text-black mb-2">
-              Metric *
+              Métrique *
             </label>
             {category && COMMON_METRICS[category as keyof typeof COMMON_METRICS] ? (
               <select
@@ -427,7 +427,7 @@ const CreateGoalModal: React.FC<{
                 className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium"
                 required
               >
-                <option value="">Select a metric</option>
+                <option value="">Sélectionne une métrique</option>
                 {COMMON_METRICS[category as keyof typeof COMMON_METRICS].map((m) => (
                   <option key={m} value={m}>
                     {m.replace(/_/g, ' ').charAt(0).toUpperCase() + m.replace(/_/g, ' ').slice(1)}
@@ -446,7 +446,7 @@ const CreateGoalModal: React.FC<{
 
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Current Value *"
+              label="Valeur actuelle *"
               type="number"
               step="0.01"
               value={currentValue}
@@ -456,7 +456,7 @@ const CreateGoalModal: React.FC<{
             />
 
             <Input
-              label="Target Value *"
+              label="Valeur cible *"
               type="number"
               step="0.01"
               value={targetValue}
@@ -467,7 +467,7 @@ const CreateGoalModal: React.FC<{
           </div>
 
           <Input
-            label="Unit *"
+            label="Unité *"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
             placeholder="kg, km, reps..."
@@ -475,7 +475,7 @@ const CreateGoalModal: React.FC<{
           />
 
           <Input
-            label="Deadline *"
+            label="Échéance *"
             type="date"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
@@ -484,10 +484,10 @@ const CreateGoalModal: React.FC<{
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" variant="accent" className="flex-1">
-              Create Goal
+              Créer l'objectif
             </Button>
           </div>
         </form>

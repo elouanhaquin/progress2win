@@ -32,7 +32,7 @@ const ProgressPage: React.FC = () => {
   }, [user]);
 
   const handleDelete = async (progressId: number) => {
-    if (!confirm('Are you sure you want to delete this entry?')) return;
+    if (!confirm('Es-tu sûr de vouloir supprimer cette entrée?')) return;
 
     try {
       await progressApi.delete(progressId);
@@ -58,9 +58,9 @@ const ProgressPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-black">Progress Tracking</h1>
+          <h1 className="text-4xl font-black text-black">Suivi des progrès</h1>
           <p className="text-lg text-neutral-600 font-medium mt-2">
-            Monitor your journey to success
+            Surveille ton parcours vers le succès
           </p>
         </div>
         <Button
@@ -69,7 +69,7 @@ const ProgressPage: React.FC = () => {
           icon={<Plus className="w-5 h-5" />}
           onClick={() => setIsModalOpen(true)}
         >
-          Add Progress
+          Ajouter Progrès
         </Button>
       </div>
 
@@ -78,7 +78,7 @@ const ProgressPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">Total Entries</p>
+              <p className="text-sm font-semibold text-neutral-600">Total Entrées</p>
               <p className="text-3xl font-black text-black">{progressEntries.length}</p>
             </div>
             <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -90,7 +90,7 @@ const ProgressPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">This Month</p>
+              <p className="text-sm font-semibold text-neutral-600">Ce mois-ci</p>
               <p className="text-3xl font-black text-black">{thisMonthCount}</p>
             </div>
             <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -102,7 +102,7 @@ const ProgressPage: React.FC = () => {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-neutral-600">Categories</p>
+              <p className="text-sm font-semibold text-neutral-600">Catégories</p>
               <p className="text-3xl font-black text-black">{categories.size}</p>
             </div>
             <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -114,7 +114,7 @@ const ProgressPage: React.FC = () => {
 
       {/* Progress List */}
       <Card>
-        <h2 className="text-2xl font-black text-black mb-6">Recent Entries</h2>
+        <h2 className="text-2xl font-black text-black mb-6">Entrées récentes</h2>
 
         {isLoading ? (
           <div className="text-center py-12">
@@ -125,10 +125,10 @@ const ProgressPage: React.FC = () => {
             <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
               <BarChart3 className="w-8 h-8 text-neutral-500" />
             </div>
-            <h3 className="text-lg font-bold text-black mb-2">No entries yet</h3>
-            <p className="text-neutral-600 mb-4">Start tracking your progress today!</p>
+            <h3 className="text-lg font-bold text-black mb-2">Aucune entrée encore</h3>
+            <p className="text-neutral-600 mb-4">Commence à suivre tes progrès aujourd'hui!</p>
             <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-              Add Your First Entry
+              Ajouter ta première entrée
             </Button>
           </div>
         ) : (
@@ -149,7 +149,7 @@ const ProgressPage: React.FC = () => {
                   </div>
                   <div className="mt-2 flex items-center gap-4 text-sm text-neutral-600">
                     <span className="font-semibold">
-                      Value: <span className="text-black">{entry.value} {entry.unit || ''}</span>
+                      Valeur: <span className="text-black">{entry.value} {entry.unit || ''}</span>
                     </span>
                     <span>
                       Date: {format(new Date(entry.date), 'MMM dd, yyyy')}
@@ -166,7 +166,7 @@ const ProgressPage: React.FC = () => {
                     icon={<Trash2 className="w-4 h-4" />}
                     onClick={() => handleDelete(entry.id)}
                   >
-                    Delete
+                    Supprimer
                   </Button>
                 </div>
               </div>

@@ -36,7 +36,7 @@ const ComparePage: React.FC = () => {
         setGroup(fullGroup);
       }
     } catch (error: any) {
-      setError(error.message || 'Failed to load group');
+      setError(error.message || 'Échec du chargement du groupe');
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +57,7 @@ const ComparePage: React.FC = () => {
   };
 
   const handleLeaveGroup = async () => {
-    if (!group || !confirm(`Are you sure you want to leave "${group.name}"?`)) return;
+    if (!group || !confirm(`Es-tu sûr de vouloir quitter "${group.name}"?`)) return;
 
     try {
       await groupsApi.leave(group.id);
@@ -65,7 +65,7 @@ const ComparePage: React.FC = () => {
       setGroupProgress([]);
       loadGroup();
     } catch (error: any) {
-      setError(error.message || 'Failed to leave group');
+      setError(error.message || 'Échec de la sortie du groupe');
     }
   };
 
@@ -176,9 +176,9 @@ const ComparePage: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-black text-black">Compare Progress</h1>
+        <h1 className="text-4xl font-black text-black">Comparer les progrès</h1>
         <p className="text-lg text-neutral-600 font-medium mt-2">
-          {group ? 'Compare fitness progress with your group' : 'Create or join a group to compare with friends'}
+          {group ? 'Compare tes progrès fitness avec ton groupe' : 'Crée ou rejoins un groupe pour comparer avec tes amis'}
         </p>
       </div>
 
@@ -192,14 +192,14 @@ const ComparePage: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">No Group Yet</h3>
-            <p className="text-neutral-600 mb-4">Create or join a group to start comparing progress!</p>
+            <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
+            <p className="text-neutral-600 mb-4">Crée ou rejoins un groupe pour commencer à comparer!</p>
             <div className="flex gap-3 justify-center">
               <Button variant="accent" onClick={() => setShowCreateModal(true)}>
-                Create Group
+                Créer un groupe
               </Button>
               <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
-                Join Group
+                Rejoindre un groupe
               </Button>
             </div>
           </div>
@@ -222,12 +222,12 @@ const ComparePage: React.FC = () => {
                 icon={<LogOut className="w-4 h-4" />}
                 onClick={handleLeaveGroup}
               >
-                Leave
+                Quitter
               </Button>
             </div>
 
             <div className="border-t-2 border-black pt-4 mt-4">
-              <h3 className="text-sm font-bold text-black mb-3">Members ({group.members.length})</h3>
+              <h3 className="text-sm font-bold text-black mb-3">Membres ({group.members.length})</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {group.members.map((member) => (
                   <div
@@ -253,7 +253,7 @@ const ComparePage: React.FC = () => {
             <Card>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-neutral-600">Total Entries</p>
+                  <p className="text-sm font-semibold text-neutral-600">Total entrées</p>
                   <p className="text-3xl font-black text-black">{groupProgress.length}</p>
                 </div>
                 <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -265,7 +265,7 @@ const ComparePage: React.FC = () => {
             <Card>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-neutral-600">Members</p>
+                  <p className="text-sm font-semibold text-neutral-600">Membres</p>
                   <p className="text-3xl font-black text-black">{group.members.length}</p>
                 </div>
                 <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -277,12 +277,12 @@ const ComparePage: React.FC = () => {
             <Card>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-neutral-600">Most Active</p>
+                  <p className="text-sm font-semibold text-neutral-600">Plus actif</p>
                   <p className="text-lg font-black text-black">
                     {topPerformer ? topPerformer.name : 'N/A'}
                   </p>
                   {topPerformer && (
-                    <p className="text-xs text-neutral-600">{topPerformer.count} entries</p>
+                    <p className="text-xs text-neutral-600">{topPerformer.count} entrées</p>
                   )}
                 </div>
                 <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
@@ -303,8 +303,8 @@ const ComparePage: React.FC = () => {
             <Card>
               <div className="text-center py-12">
                 <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-black mb-2">No Comparable Data Yet</h3>
-                <p className="text-neutral-600">Start logging progress to see comparisons!</p>
+                <h3 className="text-lg font-bold text-black mb-2">Aucune donnée comparable</h3>
+                <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir les comparaisons!</p>
               </div>
             </Card>
           ) : (
@@ -466,7 +466,7 @@ const CreateGroupModal: React.FC<{
       await groupsApi.create({ name: name.trim(), description: description.trim() || undefined });
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Failed to create group');
+      setError(err.message || 'Échec de la création du groupe');
     } finally {
       setIsLoading(false);
     }
@@ -482,16 +482,16 @@ const CreateGroupModal: React.FC<{
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Create Group</h2>
+        <h2 className="text-2xl font-black text-black mb-6">Créer un groupe</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Input
-            label="Group Name *"
+            label="Nom du groupe *"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="My Fitness Squad"
+            placeholder="Mon équipe fitness"
             required
           />
 
@@ -500,7 +500,7 @@ const CreateGroupModal: React.FC<{
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Optional description..."
+              placeholder="Description optionnelle..."
               rows={3}
               className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium resize-none"
             />
@@ -508,10 +508,10 @@ const CreateGroupModal: React.FC<{
 
           <div className="flex gap-3">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" variant="accent" loading={isLoading} className="flex-1">
-              Create
+              Créer
             </Button>
           </div>
         </form>
@@ -539,7 +539,7 @@ const JoinGroupModal: React.FC<{
       await groupsApi.join(code.trim().toUpperCase());
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Failed to join group');
+      setError(err.message || 'Échec de l\'entrée dans le groupe');
     } finally {
       setIsLoading(false);
     }
@@ -555,13 +555,13 @@ const JoinGroupModal: React.FC<{
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Join Group</h2>
+        <h2 className="text-2xl font-black text-black mb-6">Rejoindre un groupe</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Input
-            label="Group Code *"
+            label="Code du groupe *"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="ABC123"
@@ -571,10 +571,10 @@ const JoinGroupModal: React.FC<{
 
           <div className="flex gap-3">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" variant="primary" loading={isLoading} className="flex-1">
-              Join
+              Rejoindre
             </Button>
           </div>
         </form>

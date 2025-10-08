@@ -9,13 +9,13 @@ import { authApi } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 
 const registerSchema = z.object({
-  firstName: z.string().min(2, 'First name must be at least 2 characters'),
-  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
+  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  email: z.string().email('Adresse email invalide'),
+  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Les mots de passe ne correspondent pas",
   path: ["confirmPassword"],
 });
 
@@ -69,8 +69,8 @@ export const RegisterPage: React.FC = () => {
           <div className="w-20 h-20 bg-accent-500 border-4 border-black shadow-neo-xl mx-auto mb-4 flex items-center justify-center">
             <span className="text-black text-3xl font-black">P2W</span>
           </div>
-          <h1 className="text-3xl font-black text-black">Join Progress2Win!</h1>
-          <p className="text-neutral-600 font-medium">Start tracking your progress today</p>
+          <h1 className="text-3xl font-black text-black">Rejoins Progress2Win!</h1>
+          <p className="text-neutral-600 font-medium">Commence à suivre tes progrès aujourd'hui</p>
         </div>
 
         <Card>
@@ -84,15 +84,15 @@ export const RegisterPage: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="First Name"
-                  placeholder="John"
+                  label="Prénom"
+                  placeholder="Jean"
                   icon={<User className="w-5 h-5" />}
                   error={errors.firstName?.message}
                   {...register('firstName')}
                 />
                 <Input
-                  label="Last Name"
-                  placeholder="Doe"
+                  label="Nom"
+                  placeholder="Dupont"
                   icon={<User className="w-5 h-5" />}
                   error={errors.lastName?.message}
                   {...register('lastName')}
@@ -100,9 +100,9 @@ export const RegisterPage: React.FC = () => {
               </div>
 
               <Input
-                label="Email Address"
+                label="Adresse email"
                 type="email"
-                placeholder="john@example.com"
+                placeholder="jean@exemple.com"
                 icon={<Mail className="w-5 h-5" />}
                 error={errors.email?.message}
                 {...register('email')}
@@ -110,9 +110,9 @@ export const RegisterPage: React.FC = () => {
 
               <div className="relative">
                 <Input
-                  label="Password"
+                  label="Mot de passe"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a strong password"
+                  placeholder="Crée un mot de passe fort"
                   icon={<Lock className="w-5 h-5" />}
                   error={errors.password?.message}
                   {...register('password')}
@@ -128,9 +128,9 @@ export const RegisterPage: React.FC = () => {
 
               <div className="relative">
                 <Input
-                  label="Confirm Password"
+                  label="Confirmer mot de passe"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
+                  placeholder="Confirme ton mot de passe"
                   icon={<Lock className="w-5 h-5" />}
                   error={errors.confirmPassword?.message}
                   {...register('confirmPassword')}
@@ -151,19 +151,19 @@ export const RegisterPage: React.FC = () => {
                 loading={isLoading}
                 className="w-full"
               >
-                Create Account
+                Créer un compte
               </Button>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
-              Already have an account?{' '}
+              Tu as déjà un compte?{' '}
               <Link
                 to="/login"
                 className="font-semibold text-primary-600 hover:text-primary-800 transition-colors"
               >
-                Sign in here
+                Connecte-toi ici
               </Link>
             </p>
           </div>

@@ -102,6 +102,9 @@ class ExpressApiClient {
 
 const expressClient = new ExpressApiClient(config.expressApiUrl || '');
 
+// Export the API client for direct use
+export const api = expressClient;
+
 // Auth API
 export const authApi = {
   register: async (userData: UserCreate): Promise<User> => {

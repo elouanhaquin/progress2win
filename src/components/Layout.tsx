@@ -9,19 +9,21 @@ import {
   Trophy,
   Plus,
   Menu,
-  X
+  X,
+  MessageSquare
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useAppStore } from '../stores/appStore';
 import { clsx } from 'clsx';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Progress', href: '/progress', icon: BarChart3 },
-  { name: 'Goals', href: '/goals', icon: Target },
-  { name: 'Compare', href: '/compare', icon: Users },
-  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Tableau de bord', href: '/', icon: Home },
+  { name: 'Progrès', href: '/progress', icon: BarChart3 },
+  { name: 'Objectifs', href: '/goals', icon: Target },
+  { name: 'Comparer', href: '/compare', icon: Users },
+  { name: 'Classement', href: '/leaderboard', icon: Trophy },
+  { name: 'Feedback', href: '/feedback', icon: MessageSquare },
+  { name: 'Paramètres', href: '/settings', icon: Settings },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -55,7 +57,7 @@ export const Sidebar: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-xl font-black text-black">Progress2Win</h1>
-                <p className="text-xs text-neutral-600 font-medium">Track & Win</p>
+                <p className="text-xs text-neutral-600 font-medium">Suivez vos progrès</p>
               </div>
             </div>
             <button
@@ -125,7 +127,7 @@ export const Sidebar: React.FC = () => {
               className="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white bg-accent-500 border-2 border-accent-700 shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Add Progress
+              Ajouter Progrès
             </Link>
           </div>
         </div>
@@ -180,7 +182,7 @@ export const Header: React.FC = () => {
                 onClick={handleLogout}
                 className="px-4 py-2 text-sm font-semibold text-white bg-danger-500 border-2 border-danger-700 shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200"
               >
-                Logout
+                Déconnexion
               </button>
             </div>
           )}

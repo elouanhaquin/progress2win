@@ -10,12 +10,12 @@ import { PROGRESS_CATEGORIES, COMMON_METRICS } from '../types';
 import type { ProgressFormData } from '../types';
 
 const progressSchema = z.object({
-  category: z.string().min(1, 'Category is required'),
-  metric: z.string().min(1, 'Metric is required'),
-  value: z.number().min(0, 'Value must be positive'),
+  category: z.string().min(1, 'La catégorie est requise'),
+  metric: z.string().min(1, 'La métrique est requise'),
+  value: z.number().min(0, 'La valeur doit être positive'),
   unit: z.string().optional(),
   notes: z.string().optional(),
-  date: z.string().min(1, 'Date is required'),
+  date: z.string().min(1, 'La date est requise'),
 });
 
 interface AddProgressModalProps {
@@ -73,7 +73,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
         onClose();
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to add progress entry');
+      setError(err.message || 'Échec de l\'ajout de l\'entrée');
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +100,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Add Progress Entry</h2>
+        <h2 className="text-2xl font-black text-black mb-6">Ajouter une entrée</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {error && (
@@ -112,14 +112,14 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
           {/* Category */}
           <div>
             <label className="block text-sm font-bold text-black mb-2">
-              Category *
+              Catégorie *
             </label>
             <select
               {...register('category')}
               onChange={handleCategoryChange}
               className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium"
             >
-              <option value="">Select a category</option>
+              <option value="">Sélectionne une catégorie</option>
               {PROGRESS_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -134,14 +134,14 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
           {/* Metric */}
           <div>
             <label className="block text-sm font-bold text-black mb-2">
-              Metric *
+              Métrique *
             </label>
             {selectedCategory && COMMON_METRICS[selectedCategory as keyof typeof COMMON_METRICS] ? (
               <select
                 {...register('metric')}
                 className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium"
               >
-                <option value="">Select a metric</option>
+                <option value="">Sélectionne une métrique</option>
                 {COMMON_METRICS[selectedCategory as keyof typeof COMMON_METRICS].map((metric) => (
                   <option key={metric} value={metric}>
                     {metric.replace(/_/g, ' ').charAt(0).toUpperCase() + metric.replace(/_/g, ' ').slice(1)}
@@ -164,7 +164,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-black mb-2">
-                Value *
+                Valeur *
               </label>
               <Input
                 type="number"
@@ -176,7 +176,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
             </div>
             <div>
               <label className="block text-sm font-bold text-black mb-2">
-                Unit
+                Unité
               </label>
               <Input
                 {...register('unit')}
@@ -206,7 +206,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
             <textarea
               {...register('notes')}
               rows={3}
-              placeholder="Any additional notes..."
+              placeholder="Notes additionnelles..."
               className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium resize-none"
             />
           </div>
@@ -218,7 +218,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
               onClick={onClose}
               className="flex-1"
             >
-              Cancel
+              Annuler
             </Button>
             <Button
               type="submit"
@@ -226,7 +226,7 @@ export const AddProgressModal: React.FC<AddProgressModalProps> = ({
               loading={isLoading}
               className="flex-1"
             >
-              Add Entry
+              Ajouter
             </Button>
           </div>
         </form>
