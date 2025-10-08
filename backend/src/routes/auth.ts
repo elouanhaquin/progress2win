@@ -12,6 +12,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-i
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
 
+// Helper to convert DB row to camelCase
+const formatUser = (row: any): User => ({
+  id: row.id,
+  email: row.email,
+  firstName: row.first_name,
+  lastName: row.last_name,
+  avatarUrl: row.avatar_url,
+  goals: row.goals ? JSON.parse(row.goals) : [],
+  isActive: Boolean(row.is_active),
+  emailVerified: Boolean(row.email_verified),
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+});
+
 const generateTokens = (userId: number) => {
   const accessToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
   const refreshToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN } as jwt.SignOptions);
@@ -49,7 +63,7 @@ router.post('/register', async (req, res, next) => {
       [insertResult.rows[0].lastInsertRowid]
     );
 
-    const user = result.rows[0];
+    const user = formatUser(result.rows[0]);
     res.status(201).json(user);
   } catch (error: any) {
     // Handle SQLite unique constraint error
@@ -87,6 +101,27 @@ router.post('/login', async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Clean up expired tokens for this user
+    await query(
+      "DELETE FROM refresh_tokens WHERE user_id = ? AND expires_at <= datetime('now')",
+      [user.id]
+    );
+
+    // Check number of active tokens and limit to 5
+    const activeTokensResult = await query(
+      'SELECT COUNT(*) as count FROM refresh_tokens WHERE user_id = ?',
+      [user.id]
+    );
+
+    const activeTokensCount = activeTokensResult.rows[0].count;
+    if (activeTokensCount >= 5) {
+      // Delete the oldest token to make room
+      await query(
+        'DELETE FROM refresh_tokens WHERE user_id = ? AND id IN (SELECT id FROM refresh_tokens WHERE user_id = ? ORDER BY created_at ASC LIMIT 1)',
+        [user.id, user.id]
+      );
+    }
+
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user.id);
 
@@ -99,13 +134,17 @@ router.post('/login', async (req, res, next) => {
       [user.id, refreshToken, expiresAt.toISOString()]
     );
 
-    // Remove password_hash from response
-    delete user.password_hash;
+    // Check if password reset is required
+    const passwordResetRequired = user.password_reset_required === 1;
+
+    // Format user (converts snake_case to camelCase)
+    const formattedUser = formatUser(user);
 
     const authResponse: AuthResponse = {
-      user,
+      user: formattedUser,
       accessToken,
       refreshToken,
+      passwordResetRequired,
     };
 
     res.json(authResponse);
@@ -138,7 +177,7 @@ router.post('/refresh', async (req, res, next) => {
       return res.status(400).json({ error: 'Refresh token is required' });
     }
 
-    // Verify refresh token
+    // Verify refresh token JWT signature
     let decoded;
     try {
       decoded = jwt.verify(refreshToken, JWT_SECRET) as { userId: number };
@@ -146,14 +185,38 @@ router.post('/refresh', async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid refresh token' });
     }
 
-    // Check if refresh token exists in database
+    // Check if refresh token exists in database AND delete it immediately (rotation)
     const tokenResult = await query(
-      "SELECT * FROM refresh_tokens WHERE token = ? AND expires_at > datetime('now')",
+      "SELECT user_id FROM refresh_tokens WHERE token = ? AND expires_at > datetime('now')",
       [refreshToken]
     );
 
     if (tokenResult.rows.length === 0) {
       return res.status(401).json({ error: 'Refresh token expired or not found' });
+    }
+
+    // Delete the old refresh token immediately (rotation security)
+    await query('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken]);
+
+    // Clean up expired tokens for this user
+    await query(
+      "DELETE FROM refresh_tokens WHERE user_id = ? AND expires_at <= datetime('now')",
+      [decoded.userId]
+    );
+
+    // Check number of active tokens and limit to 5
+    const activeTokensResult = await query(
+      'SELECT COUNT(*) as count FROM refresh_tokens WHERE user_id = ?',
+      [decoded.userId]
+    );
+
+    const activeTokensCount = activeTokensResult.rows[0].count;
+    if (activeTokensCount >= 5) {
+      // Delete the oldest token to make room
+      await query(
+        'DELETE FROM refresh_tokens WHERE user_id = ? AND id IN (SELECT id FROM refresh_tokens WHERE user_id = ? ORDER BY created_at ASC LIMIT 1)',
+        [decoded.userId, decoded.userId]
+      );
     }
 
     // Generate new tokens
@@ -167,9 +230,6 @@ router.post('/refresh', async (req, res, next) => {
       'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
       [decoded.userId, newRefreshToken, expiresAt.toISOString()]
     );
-
-    // Delete old refresh token
-    await query('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken]);
 
     res.json({ accessToken, refreshToken: newRefreshToken });
   } catch (error) {
@@ -186,27 +246,45 @@ router.post('/forgot-password', async (req, res, next) => {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    const userResult = await query('SELECT id FROM users WHERE email = ?', [email]);
-
-    if (userResult.rows.length === 0) {
-      // Don't reveal if email exists
-      return res.json({ message: 'If the email exists, a reset link has been sent' });
-    }
-
-    const userId = userResult.rows[0].id;
-    const resetToken = uuidv4();
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour
-
-    await query(
-      'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-      [userId, resetToken, expiresAt.toISOString()]
+    const userResult = await query(
+      'SELECT id, email, first_name FROM users WHERE email = ?',
+      [email]
     );
 
-    // TODO: Send email with reset token
-    console.log(`Reset token for user ${userId}: ${resetToken}`);
+    // Don't reveal if email exists - always return success
+    if (userResult.rows.length === 0) {
+      return res.json({ message: 'Si cet email existe, un mot de passe temporaire a été envoyé' });
+    }
 
-    res.json({ message: 'If the email exists, a reset link has been sent' });
+    const user = userResult.rows[0] as { id: number; email: string; first_name: string };
+
+    // Generate temporary password
+    const { generateTemporaryPassword, sendPasswordResetEmail } = await import('../utils/email.js');
+    const temporaryPassword = generateTemporaryPassword();
+
+    // Hash the temporary password
+    const passwordHash = await bcrypt.hash(temporaryPassword, 10);
+
+    // Update user's password with temporary password and set reset flag
+    await query(
+      'UPDATE users SET password_hash = ?, password_reset_required = 1 WHERE id = ?',
+      [passwordHash, user.id]
+    );
+
+    // Delete all existing refresh tokens to force re-login
+    await query('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id]);
+
+    // Send email with temporary password
+    try {
+      await sendPasswordResetEmail(user.email, user.first_name, temporaryPassword);
+      console.log(`✅ Temporary password sent to ${user.email}`);
+    } catch (emailError: any) {
+      console.error('❌ Failed to send password reset email:', emailError);
+      // Rollback the password change if email fails
+      return res.status(500).json({ error: 'Échec de l\'envoi de l\'email de réinitialisation' });
+    }
+
+    res.json({ message: 'Si cet email existe, un mot de passe temporaire a été envoyé' });
   } catch (error) {
     next(error);
   }
@@ -251,11 +329,60 @@ router.post('/reset-password', async (req, res, next) => {
   }
 });
 
+// Change password (for users who need to reset their temporary password)
+router.post('/change-password', authenticate, async (req: AuthRequest, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Le nouveau mot de passe doit contenir au moins 6 caractères' });
+    }
+
+    // Get user with current password
+    const userResult = await query(
+      'SELECT id, password_hash FROM users WHERE id = ?',
+      [req.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0] as { id: number; password_hash: string };
+
+    // Verify current password
+    const validPassword = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!validPassword) {
+      return res.status(401).json({ error: 'Le mot de passe actuel est incorrect' });
+    }
+
+    // Hash new password
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset flag
+    await query(
+      'UPDATE users SET password_hash = ?, password_reset_required = 0 WHERE id = ?',
+      [passwordHash, user.id]
+    );
+
+    // Delete all refresh tokens to force re-login on all devices
+    await query('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id]);
+
+    res.json({ message: 'Mot de passe changé avec succès' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Get current user
 router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const result = await query(
-      'SELECT id, email, first_name, last_name, avatar_url, goals, is_active, email_verified, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, email, first_name, last_name, avatar_url, goals, is_active, email_verified, password_reset_required, created_at, updated_at FROM users WHERE id = ?',
       [req.userId]
     );
 
@@ -263,7 +390,7 @@ router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(result.rows[0]);
+    res.json(formatUser(result.rows[0]));
   } catch (error) {
     next(error);
   }

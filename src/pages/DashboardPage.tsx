@@ -122,284 +122,286 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">
-            Bienvenue, {user.firstName}! 👋
-          </h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Prêt à atteindre tes objectifs aujourd'hui?
-          </p>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Welcome Section */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">
+              Bienvenue, {user.firstName}! 👋
+            </h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Prêt à atteindre tes objectifs aujourd'hui?
+            </p>
+          </div>
+          <Link to="/progress/add">
+            <Button variant="accent" size="lg" icon={<Plus className="w-5 h-5" />}>
+              Ajouter Progrès
+            </Button>
+          </Link>
         </div>
-        <Link to="/progress/add">
-          <Button variant="accent" size="lg" icon={<Plus className="w-5 h-5" />}>
-            Ajouter Progrès
-          </Button>
-        </Link>
-      </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Cette semaine</p>
-              <p className="text-3xl font-black text-black">{weeklyStats.entries}</p>
-              <p className="text-xs text-neutral-500">entrées</p>
-            </div>
-            <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-white" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Cette semaine</p>
+                <p className="text-3xl font-black text-black">{weeklyStats.entries}</p>
+                <p className="text-xs text-neutral-500">entrées</p>
+              </div>
+              <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
-        </Card>
 
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Catégories</p>
-              <p className="text-3xl font-black text-black">{weeklyStats.categories.size}</p>
-              <p className="text-xs text-neutral-500">actives</p>
-            </div>
-            <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Target className="w-6 h-6 text-white" />
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Catégories</p>
+                <p className="text-3xl font-black text-black">{weeklyStats.categories.size}</p>
+                <p className="text-xs text-neutral-500">actives</p>
+              </div>
+              <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
-        </Card>
 
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Valeur moy.</p>
-              <p className="text-3xl font-black text-black">
-                {weeklyStats.avgValue.toFixed(1)}
-              </p>
-              <p className="text-xs text-neutral-500">cette semaine</p>
-            </div>
-            <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-black" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Objectifs</p>
-              <p className="text-3xl font-black text-black">{user.goals.length}</p>
-              <p className="text-xs text-neutral-500">définis</p>
-            </div>
-            <div className="w-12 h-12 bg-success-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-white" />
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Valeur moy.</p>
+                <p className="text-3xl font-black text-black">
+                  {weeklyStats.avgValue.toFixed(1)}
+                </p>
+                <p className="text-xs text-neutral-500">cette semaine</p>
+              </div>
+              <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-black" />
+              </div>
             </div>
           </div>
-        </Card>
-      </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Progress & Chart */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Chart */}
-          <Card>
-            <h2 className="text-2xl font-black text-black mb-6">Aperçu d'activité (7 derniers jours)</h2>
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64">
-                <LoadingSpinner />
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Objectifs</p>
+                <p className="text-3xl font-black text-black">{user.goals.length}</p>
+                <p className="text-xs text-neutral-500">définis</p>
               </div>
-            ) : chartData.length > 0 && chartData.some(d => d.entries > 0) ? (
-              <div className="border-4 border-black bg-white p-4">
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={chartData}>
-                    <defs>
-                      <linearGradient id="colorEntries" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={1}/>
-                        <stop offset="95%" stopColor="#93c5fd" stopOpacity={0.3}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray="0"
-                      stroke="#000000"
-                      strokeWidth={2}
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#000000"
-                      strokeWidth={3}
-                      tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
-                      axisLine={{ stroke: '#000000', strokeWidth: 3 }}
-                    />
-                    <YAxis
-                      stroke="#000000"
-                      strokeWidth={3}
-                      tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
-                      axisLine={{ stroke: '#000000', strokeWidth: 3 }}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#fbbf24',
-                        border: '3px solid black',
-                        borderRadius: '0',
-                        boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
-                        fontWeight: 800,
-                        padding: '8px 12px'
-                      }}
-                      labelStyle={{
-                        color: '#000000',
-                        fontWeight: 800,
-                        marginBottom: '4px'
-                      }}
-                      itemStyle={{
-                        color: '#000000',
-                        fontWeight: 700
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="entries"
-                      stroke="#000000"
-                      strokeWidth={4}
-                      fillOpacity={1}
-                      fill="url(#colorEntries)"
-                      name="Entrées"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+              <div className="w-12 h-12 bg-success-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-white" />
               </div>
-            ) : (
-              <div className="text-center py-12">
-                <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
-                <p className="text-neutral-600">Aucune donnée pour les 7 derniers jours</p>
-              </div>
-            )}
-          </Card>
-
-          {/* Recent Progress */}
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-black text-black">Progrès récents</h2>
-              <Link to="/progress">
-                <Button variant="neutral" size="sm">
-                  Voir tout
-                </Button>
-              </Link>
             </div>
+          </div>
+        </div>
 
-            {isLoading ? (
-              <div className="flex items-center justify-center h-32">
-                <LoadingSpinner />
-              </div>
-            ) : recentProgress.length > 0 ? (
-              <div className="space-y-4">
-                {recentProgress.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black shadow-neo-sm"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-10 h-10 border-2 border-black shadow-neo-sm flex items-center justify-center bg-${getCategoryColor(entry.category)}-500`}>
-                        {getCategoryIcon(entry.category)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-black capitalize">
-                          {entry.category.replace(/_/g, ' ')} - {entry.metric.replace(/_/g, ' ')}
-                        </p>
-                        <p className="text-sm text-neutral-600">
-                          {format(new Date(entry.date), 'MMM dd, yyyy')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-black text-black">
-                        {entry.value} {entry.unit || ''}
-                      </p>
-                      <Badge variant={getCategoryColor(entry.category) as any}>
-                        {entry.category.replace(/_/g, ' ')}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
-                  <BarChart3 className="w-8 h-8 text-neutral-500" />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Recent Progress & Chart */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Chart */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
+              <h2 className="text-2xl font-black text-black mb-6">Aperçu d'activité (7 derniers jours)</h2>
+              {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <LoadingSpinner />
                 </div>
-                <h3 className="text-lg font-bold text-black mb-2">Aucun progrès encore</h3>
-                <p className="text-neutral-600 mb-4">Commence à suivre tes progrès fitness aujourd'hui!</p>
+              ) : chartData.length > 0 && chartData.some(d => d.entries > 0) ? (
+                <div className="border-2 border-black bg-neutral-50 p-4">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorEntries" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={1}/>
+                          <stop offset="95%" stopColor="#93c5fd" stopOpacity={0.3}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        strokeDasharray="0"
+                        stroke="#000000"
+                        strokeWidth={1}
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#000000"
+                        strokeWidth={2}
+                        tick={{ fill: '#000000', fontWeight: 600, fontSize: 12 }}
+                        axisLine={{ stroke: '#000000', strokeWidth: 2 }}
+                      />
+                      <YAxis
+                        stroke="#000000"
+                        strokeWidth={2}
+                        tick={{ fill: '#000000', fontWeight: 600, fontSize: 12 }}
+                        axisLine={{ stroke: '#000000', strokeWidth: 2 }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#fbbf24',
+                          border: '2px solid black',
+                          borderRadius: '0',
+                          boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
+                          fontWeight: 600,
+                          padding: '8px 12px'
+                        }}
+                        labelStyle={{
+                          color: '#000000',
+                          fontWeight: 700,
+                          marginBottom: '4px'
+                        }}
+                        itemStyle={{
+                          color: '#000000',
+                          fontWeight: 600
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="entries"
+                        stroke="#000000"
+                        strokeWidth={3}
+                        fillOpacity={1}
+                        fill="url(#colorEntries)"
+                        name="Entrées"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
+                  <p className="text-neutral-600">Aucune donnée pour les 7 derniers jours</p>
+                </div>
+              )}
+            </div>
+
+            {/* Recent Progress */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-black text-black">Progrès récents</h2>
                 <Link to="/progress">
-                  <Button variant="primary">
-                    Ajouter ta première entrée
+                  <Button variant="neutral" size="sm">
+                    Voir tout
                   </Button>
                 </Link>
               </div>
-            )}
-          </Card>
-        </div>
 
-        {/* Quick Actions & Goals */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <Card>
-            <h3 className="text-xl font-black text-black mb-4">Actions rapides</h3>
-            <div className="space-y-3">
-              <Link to="/progress" className="block">
-                <Button variant="primary" className="w-full justify-start">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Ajouter Progrès
-                </Button>
-              </Link>
-              <Link to="/compare" className="block">
-                <Button variant="secondary" className="w-full justify-start">
-                  <Users className="w-4 h-4 mr-2" />
-                  Comparer Progrès
-                </Button>
-              </Link>
-              <Link to="/leaderboard" className="block">
-                <Button variant="accent" className="w-full justify-start">
-                  <Trophy className="w-4 h-4 mr-2" />
-                  Voir Classement
-                </Button>
-              </Link>
-            </div>
-          </Card>
-
-          {/* Goals */}
-          <Card>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-black">Tes objectifs fitness</h3>
-              <Link to="/settings">
-                <Button variant="neutral" size="sm">
-                  Modifier
-                </Button>
-              </Link>
-            </div>
-
-            {Array.isArray(user.goals) && user.goals.length > 0 ? (
-              <div className="space-y-2">
-                {user.goals.map((goal, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center p-3 bg-neutral-50 border border-black"
-                  >
-                    <div className="w-2 h-2 bg-primary-500 border border-black mr-3"></div>
-                    <span className="text-sm font-medium text-black">{goal}</span>
+              {isLoading ? (
+                <div className="flex items-center justify-center h-32">
+                  <LoadingSpinner />
+                </div>
+              ) : recentProgress.length > 0 ? (
+                <div className="space-y-4">
+                  {recentProgress.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black shadow-neo-sm"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-10 h-10 border-2 border-black shadow-neo-sm flex items-center justify-center bg-${getCategoryColor(entry.category)}-500`}>
+                          {getCategoryIcon(entry.category)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-black capitalize">
+                            {entry.category.replace(/_/g, ' ')} - {entry.metric.replace(/_/g, ' ')}
+                          </p>
+                          <p className="text-sm text-neutral-600">
+                            {format(new Date(entry.date), 'MMM dd, yyyy')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-black text-black">
+                          {entry.value} {entry.unit || ''}
+                        </p>
+                        <Badge variant={getCategoryColor(entry.category) as any}>
+                          {entry.category.replace(/_/g, ' ')}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                    <BarChart3 className="w-8 h-8 text-neutral-500" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-6">
-                <p className="text-sm text-neutral-600 mb-3">Aucun objectif défini</p>
-                <Link to="/settings">
-                  <Button variant="primary" size="sm">
-                    Définir Objectifs
+                  <h3 className="text-lg font-bold text-black mb-2">Aucun progrès encore</h3>
+                  <p className="text-neutral-600 mb-4">Commence à suivre tes progrès fitness aujourd'hui!</p>
+                  <Link to="/progress">
+                    <Button variant="primary">
+                      Ajouter ta première entrée
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Actions & Goals */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
+              <h3 className="text-xl font-black text-black mb-4">Actions rapides</h3>
+              <div className="space-y-3">
+                <Link to="/progress" className="block">
+                  <Button variant="primary" className="w-full justify-start">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter Progrès
+                  </Button>
+                </Link>
+                <Link to="/compare" className="block">
+                  <Button variant="secondary" className="w-full justify-start">
+                    <Users className="w-4 h-4 mr-2" />
+                    Comparer Progrès
+                  </Button>
+                </Link>
+                <Link to="/leaderboard" className="block">
+                  <Button variant="accent" className="w-full justify-start">
+                    <Trophy className="w-4 h-4 mr-2" />
+                    Voir Classement
                   </Button>
                 </Link>
               </div>
-            )}
-          </Card>
+            </div>
+
+            {/* Goals */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-black text-black">Tes objectifs fitness</h3>
+                <Link to="/settings">
+                  <Button variant="neutral" size="sm">
+                    Modifier
+                  </Button>
+                </Link>
+              </div>
+
+              {Array.isArray(user.goals) && user.goals.length > 0 ? (
+                <div className="space-y-2">
+                  {user.goals.map((goal, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-3 bg-neutral-50 border border-black"
+                    >
+                      <div className="w-2 h-2 bg-primary-500 border border-black mr-3"></div>
+                      <span className="text-sm font-medium text-black">{goal}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-sm text-neutral-600 mb-3">Aucun objectif défini</p>
+                  <Link to="/settings">
+                    <Button variant="primary" size="sm">
+                      Définir Objectifs
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  passwordResetRequired: boolean;
 }
 
 interface AuthActions {
@@ -30,6 +31,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      passwordResetRequired: false,
 
       // Actions
       login: (authResponse: AuthResponse) => {
@@ -38,6 +40,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           accessToken: authResponse.accessToken,
           refreshToken: authResponse.refreshToken,
           isAuthenticated: true,
+          passwordResetRequired: authResponse.passwordResetRequired || false,
           error: null,
         });
       },
@@ -48,6 +51,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
+          passwordResetRequired: false,
           error: null,
         });
       },

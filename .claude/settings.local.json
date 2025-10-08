@@ -11,7 +11,14 @@
       "Bash(docker stop:*)",
       "Bash(docker rm:*)",
       "Bash(npm install:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run migrate:*)",
+      "Bash(sqlite3:*)",
+      "Bash(node -e \"const db = require(''better-sqlite3'')(''./database.sqlite''); const result = db.prepare(''SELECT id, email, first_name, last_name, avatar_url FROM users LIMIT 1'').get(); console.log(JSON.stringify(result, null, 2));\")"
     ],
     "deny": [],
     "ask": []

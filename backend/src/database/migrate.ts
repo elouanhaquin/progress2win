@@ -16,10 +16,21 @@ async function runMigrations() {
         goals TEXT DEFAULT '[]',
         is_active INTEGER DEFAULT 1,
         email_verified INTEGER DEFAULT 0,
+        password_reset_required INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Add password_reset_required column if it doesn't exist (for existing databases)
+    try {
+      db.exec(`ALTER TABLE users ADD COLUMN password_reset_required INTEGER DEFAULT 0`);
+    } catch (error: any) {
+      // Column might already exist, ignore error
+      if (!error.message.includes('duplicate column name')) {
+        throw error;
+      }
+    }
 
     // Refresh tokens table
     db.exec(`

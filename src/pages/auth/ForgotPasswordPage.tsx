@@ -49,13 +49,13 @@ export const ForgotPasswordPage: React.FC = () => {
               <Mail className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl font-black text-black">Vérifie ton email!</h1>
-            <p className="text-neutral-600 font-medium">Nous t'avons envoyé un lien de réinitialisation</p>
+            <p className="text-neutral-600 font-medium">Nous t'avons envoyé un mot de passe temporaire</p>
           </div>
 
           <Card>
             <div className="text-center space-y-6">
               <Alert variant="success">
-                Si un compte avec cet email existe, nous t'avons envoyé un lien de réinitialisation.
+                Si un compte avec cet email existe, nous t'avons envoyé un mot de passe temporaire.
               </Alert>
               
               <div className="space-y-4">
@@ -116,7 +116,7 @@ export const ForgotPasswordPage: React.FC = () => {
                 loading={isLoading}
                 className="w-full"
               >
-                Envoyer le lien
+                Recevoir un mot de passe temporaire
               </Button>
             </div>
           </form>

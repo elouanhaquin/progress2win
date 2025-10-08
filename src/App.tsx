@@ -11,6 +11,7 @@ import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+import { ChangePasswordPage } from './pages/auth/ChangePasswordPage';
 
 // Main Pages
 import { DashboardPage } from './pages/DashboardPage';
@@ -25,10 +26,16 @@ const FeedbackPage = React.lazy(() => import('./pages/FeedbackPage'));
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, passwordResetRequired } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If user needs to change password, redirect to change-password page
+  // But allow access to the change-password page itself
+  if (passwordResetRequired && window.location.pathname !== '/change-password') {
+    return <Navigate to="/change-password" replace />;
   }
 
   return <>{children}</>;
@@ -97,6 +104,14 @@ const App: React.FC = () => {
             <PublicRoute>
               <ForgotPasswordPage />
             </PublicRoute>
+          }
+        />
+        <Route
+          path="/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
+            </ProtectedRoute>
           }
         />
 

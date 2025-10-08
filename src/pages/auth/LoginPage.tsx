@@ -10,7 +10,7 @@ import { useAuthStore } from '../../stores/authStore';
 
 const loginSchema = z.object({
   email: z.string().email('Adresse email invalide'),
-  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+  password: z.string().min(1, 'Le mot de passe est requis'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -43,7 +43,13 @@ export const LoginPage: React.FC = () => {
       const authResponse = await authApi.login(data);
       console.log('Login successful:', authResponse);
       login(authResponse);
-      navigate('/');
+
+      // If password reset is required, redirect to change password page
+      if (authResponse.passwordResetRequired) {
+        navigate('/change-password');
+      } else {
+        navigate('/');
+      }
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Login failed');

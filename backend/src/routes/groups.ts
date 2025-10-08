@@ -153,6 +153,9 @@ router.get('/my-group', authenticate, async (req: AuthRequest, res, next) => {
 router.get('/:groupId', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const groupId = parseInt(req.params.groupId);
+    if (isNaN(groupId)) {
+      return res.status(400).json({ error: 'Invalid group ID' });
+    }
 
     // Check if user is member
     const memberCheck = await query(
@@ -197,6 +200,10 @@ router.get('/:groupId', authenticate, async (req: AuthRequest, res, next) => {
 router.get('/:groupId/progress', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const groupId = parseInt(req.params.groupId);
+    if (isNaN(groupId)) {
+      return res.status(400).json({ error: 'Invalid group ID' });
+    }
+
     const { category, metric, startDate, endDate, limit = '30' } = req.query;
 
     // Check if user is member
@@ -254,6 +261,9 @@ router.get('/:groupId/progress', authenticate, async (req: AuthRequest, res, nex
 router.delete('/:groupId/leave', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const groupId = parseInt(req.params.groupId);
+    if (isNaN(groupId)) {
+      return res.status(400).json({ error: 'Invalid group ID' });
+    }
 
     // Check if member
     const memberCheck = await query(

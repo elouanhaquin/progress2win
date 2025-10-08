@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, User, Bell, Shield, Palette, Save } from 'lucide-react';
 import { Card, Button, Input, Alert } from '../components/UI';
 import { useAuthStore } from '../stores/authStore';
 import { userApi } from '../services/api';
+import { AvatarPicker } from '../components/AvatarPicker';
+import { Avatar } from '../components/Avatar';
 
 const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuthStore();
@@ -12,13 +14,34 @@ const SettingsPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Profile form state
-  const [firstName, setFirstName] = useState(user?.firstName || '');
-  const [lastName, setLastName] = useState(user?.lastName || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  // Update form when user data changes
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setEmail(user.email || '');
+      setAvatarUrl(user.avatarUrl || '');
+    }
+  }, [user]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
+
+    // Validation
+    if (!firstName?.trim()) {
+      setError('Le prénom est requis');
+      return;
+    }
+
+    if (!lastName?.trim()) {
+      setError('Le nom est requis');
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -26,14 +49,16 @@ const SettingsPage: React.FC = () => {
       setSuccess(null);
 
       const updatedUser = await userApi.updateProfile(user.id, {
-        firstName,
-        lastName,
-        email,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         avatarUrl,
       });
 
       updateUser(updatedUser);
       setSuccess('Profil mis à jour avec succès!');
+
+      // Force update of avatar URL in local state
+      setAvatarUrl(updatedUser.avatarUrl || '');
     } catch (err: any) {
       setError(err.message || 'Échec de la mise à jour du profil');
     } finally {
@@ -49,44 +74,45 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">Paramètres</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Personnalise ton expérience Progress2Win
-          </p>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">Paramètres</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Personnalise ton expérience Progress2Win
+            </p>
+          </div>
+          {activeTab === 'profile' && (
+            <Button
+              variant="primary"
+              size="lg"
+              icon={<Save className="w-5 h-5" />}
+              onClick={handleSaveProfile}
+              loading={isLoading}
+            >
+              Sauvegarder
+            </Button>
+          )}
         </div>
-        {activeTab === 'profile' && (
-          <Button
-            variant="primary"
-            size="lg"
-            icon={<Save className="w-5 h-5" />}
-            onClick={handleSaveProfile}
-            loading={isLoading}
-          >
-            Sauvegarder
-          </Button>
+
+        {/* Alerts */}
+        {error && (
+          <Alert variant="danger" onClose={() => setError(null)}>
+            {error}
+          </Alert>
         )}
-      </div>
+        {success && (
+          <Alert variant="success" onClose={() => setSuccess(null)}>
+            {success}
+          </Alert>
+        )}
 
-      {/* Alerts */}
-      {error && (
-        <Alert variant="danger" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="success" onClose={() => setSuccess(null)}>
-          {success}
-        </Alert>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white border-2 border-black shadow-neo p-6">
             <nav className="space-y-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -103,30 +129,51 @@ const SettingsPage: React.FC = () => {
                     <Icon className="w-5 h-5 mr-3" />
                     {tab.label}
                   </button>
-                );
-              })}
-            </nav>
-          </Card>
-        </div>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
 
-        {/* Content */}
-        <div className="lg:col-span-3">
-          {activeTab === 'profile' && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Paramètres du profil</h2>
+          {/* Content */}
+          <div className="lg:col-span-3">
+            {activeTab === 'profile' && (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <h2 className="text-2xl font-black text-black mb-6">Paramètres du profil</h2>
               <div className="space-y-6">
+                {/* Current Avatar Display */}
+                <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
+                  <div className="w-16 h-16 border-2 border-black overflow-hidden bg-white flex items-center justify-center">
+                    <Avatar
+                      avatarUrl={avatarUrl}
+                      fallback={`${firstName?.[0] || ''}${lastName?.[0] || ''}`}
+                      size={64}
+                      className="w-full h-full object-cover"
+                      alt="Avatar actuel"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-black">Avatar actuel</h3>
+                    <p className="text-sm text-neutral-600">
+                      {firstName} {lastName}
+                    </p>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Prénom"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
+                    required
                   />
                   <Input
                     label="Nom"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
+                    required
                   />
                 </div>
                 <Input
@@ -135,20 +182,24 @@ const SettingsPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="john@example.com"
+                  disabled
                 />
-                <Input
-                  label="URL de l'avatar"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                />
-              </div>
-            </Card>
-          )}
 
-          {activeTab === 'notifications' && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Préférences de notification</h2>
+                {/* Avatar Picker */}
+                <div className="border-2 border-black p-6 bg-white">
+                  <AvatarPicker
+                    seed={user?.email || 'default'}
+                    currentAvatarUrl={avatarUrl}
+                    onAvatarSelect={setAvatarUrl}
+                  />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'notifications' && (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <h2 className="text-2xl font-black text-black mb-6">Préférences de notification</h2>
               <div className="space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
@@ -183,14 +234,14 @@ const SettingsPage: React.FC = () => {
                       <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                     </label>
                   </div>
+                  </div>
                 </div>
               </div>
-            </Card>
-          )}
+            )}
 
-          {activeTab === 'privacy' && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Paramètres de confidentialité</h2>
+            {activeTab === 'privacy' && (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <h2 className="text-2xl font-black text-black mb-6">Paramètres de confidentialité</h2>
               <div className="space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-neutral-50 border-2 border-black">
@@ -214,35 +265,36 @@ const SettingsPage: React.FC = () => {
                       <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 border-2 border-black peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                     </label>
                   </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'appearance' && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Apparence</h2>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-black mb-4">Thème</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button className="p-4 bg-white border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
-                      <div className="text-center">
-                        <div className="w-8 h-8 bg-neutral-900 mx-auto mb-2"></div>
-                        <p className="font-semibold text-black">Clair</p>
-                      </div>
-                    </button>
-                    <button className="p-4 bg-neutral-50 border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
-                      <div className="text-center">
-                        <div className="w-8 h-8 bg-neutral-100 border-2 border-black mx-auto mb-2"></div>
-                        <p className="font-semibold text-black">Sombre</p>
-                      </div>
-                    </button>
                   </div>
                 </div>
               </div>
-            </Card>
-          )}
+            )}
+
+            {activeTab === 'appearance' && (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <h2 className="text-2xl font-black text-black mb-6">Apparence</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-black mb-4">Thème</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button className="p-4 bg-white border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
+                        <div className="text-center">
+                          <div className="w-8 h-8 bg-neutral-900 mx-auto mb-2"></div>
+                          <p className="font-semibold text-black">Clair</p>
+                        </div>
+                      </button>
+                      <button className="p-4 bg-neutral-50 border-2 border-black shadow-neo-sm hover:shadow-neo hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200">
+                        <div className="text-center">
+                          <div className="w-8 h-8 bg-neutral-100 border-2 border-black mx-auto mb-2"></div>
+                          <p className="font-semibold text-black">Sombre</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

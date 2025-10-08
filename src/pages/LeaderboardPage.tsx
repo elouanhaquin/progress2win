@@ -158,110 +158,113 @@ const LeaderboardPage: React.FC = () => {
 
   if (!group) {
     return (
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-4xl font-black text-black">Classement</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Compare-toi avec les membres de ton groupe
-          </p>
-        </div>
-
-        <Card>
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
-            <p className="text-neutral-600 mb-4">Rejoins un groupe pour voir le classement!</p>
-            <Button variant="primary" onClick={() => window.location.href = '/compare'}>
-              Aller à Comparer
-            </Button>
+      <div className="min-h-screen bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          <div className="bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+            <h1 className="text-4xl font-black text-black">Classement</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Compare-toi avec les membres de ton groupe
+            </p>
           </div>
-        </Card>
+
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="text-center py-12">
+              <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
+              <p className="text-neutral-600 mb-4">Rejoins un groupe pour voir le classement!</p>
+              <Button variant="primary" onClick={() => window.location.href = '/compare'}>
+                Aller à Comparer
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">Classement</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            {group.name} - Qui est au top?
-          </p>
-        </div>
-        {myRank > 0 && (
-          <Badge variant="accent" className="text-lg px-4 py-2">
-            Ton rang: #{myRank}
-          </Badge>
-        )}
-      </div>
-
-      {error && (
-        <Alert variant="danger" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
-      {leaderboard.length === 0 ? (
-        <Card>
-          <div className="text-center py-12">
-            <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">Aucune donnée</h3>
-            <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir le classement!</p>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">Classement</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              {group.name} - Qui est au top?
+            </p>
           </div>
-        </Card>
-      ) : (
-        <>
-          {/* Top 3 Podium */}
-          {top3.length >= 3 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* 2nd Place */}
-              {top3[1] && (
-                <Card className={`text-center ${top3[1].userId === user?.id ? 'bg-secondary-50 border-secondary-700' : ''}`}>
+          {myRank > 0 && (
+            <Badge variant="accent" className="text-lg px-4 py-2">
+              Ton rang: #{myRank}
+            </Badge>
+          )}
+        </div>
+
+        {error && (
+          <Alert variant="danger" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+
+        {leaderboard.length === 0 ? (
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="text-center py-12">
+              <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-black mb-2">Aucune donnée</h3>
+              <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir le classement!</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Top 3 Podium */}
+            {top3.length >= 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* 2nd Place */}
+                {top3[1] && (
+                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[1].userId === user?.id ? 'bg-secondary-50 border-secondary-700' : ''}`}>
                   <div className="w-16 h-16 bg-secondary-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
                     <Medal className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-black">
-                    {top3[1].userId === user?.id ? 'Toi!' : top3[1].name}
-                  </h3>
-                  <p className="text-sm text-neutral-600">{top3[1].totalEntries} entrées</p>
-                  <Badge variant="secondary" className="mt-2">#2</Badge>
-                </Card>
-              )}
-
-              {/* 1st Place */}
-              {top3[0] && (
-                <Card className={`text-center ${top3[0].userId === user?.id ? 'bg-accent-50 border-accent-700' : 'bg-accent-50'}`}>
-                  <div className="w-20 h-20 bg-accent-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
-                    <Crown className="w-10 h-10 text-black" />
+                    <h3 className="text-lg font-bold text-black">
+                      {top3[1].userId === user?.id ? 'Toi!' : top3[1].name}
+                    </h3>
+                    <p className="text-sm text-neutral-600">{top3[1].totalEntries} entrées</p>
+                    <Badge variant="secondary" className="mt-2">#2</Badge>
                   </div>
-                  <h3 className="text-xl font-black text-black">
-                    {top3[0].userId === user?.id ? 'Toi!' : top3[0].name}
-                  </h3>
-                  <p className="text-base text-neutral-600 font-semibold">{top3[0].totalEntries} entrées</p>
-                  <Badge variant="accent" className="mt-2">#1</Badge>
-                </Card>
-              )}
+                )}
 
-              {/* 3rd Place */}
-              {top3[2] && (
-                <Card className={`text-center ${top3[2].userId === user?.id ? 'bg-primary-50 border-primary-700' : ''}`}>
-                  <div className="w-16 h-16 bg-primary-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
-                    <Medal className="w-8 h-8 text-white" />
+                {/* 1st Place */}
+                {top3[0] && (
+                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[0].userId === user?.id ? 'bg-accent-50 border-accent-700' : 'bg-accent-50'}`}>
+                    <div className="w-20 h-20 bg-accent-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                      <Crown className="w-10 h-10 text-black" />
+                    </div>
+                    <h3 className="text-xl font-black text-black">
+                      {top3[0].userId === user?.id ? 'Toi!' : top3[0].name}
+                    </h3>
+                    <p className="text-base text-neutral-600 font-semibold">{top3[0].totalEntries} entrées</p>
+                    <Badge variant="accent" className="mt-2">#1</Badge>
                   </div>
-                  <h3 className="text-lg font-bold text-black">
-                    {top3[2].userId === user?.id ? 'Toi!' : top3[2].name}
-                  </h3>
-                  <p className="text-sm text-neutral-600">{top3[2].totalEntries} entrées</p>
-                  <Badge variant="primary" className="mt-2">#3</Badge>
-                </Card>
-              )}
-            </div>
-          )}
+                )}
 
-          {/* Full Leaderboard */}
-          <Card>
+                {/* 3rd Place */}
+                {top3[2] && (
+                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[2].userId === user?.id ? 'bg-primary-50 border-primary-700' : ''}`}>
+                    <div className="w-16 h-16 bg-primary-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                      <Medal className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-black">
+                      {top3[2].userId === user?.id ? 'Toi!' : top3[2].name}
+                    </h3>
+                    <p className="text-sm text-neutral-600">{top3[2].totalEntries} entrées</p>
+                    <Badge variant="primary" className="mt-2">#3</Badge>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Full Leaderboard */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
             <h2 className="text-2xl font-black text-black mb-6">Classement complet</h2>
             <div className="space-y-4">
               {leaderboard.map((entry, index) => {
@@ -300,49 +303,50 @@ const LeaderboardPage: React.FC = () => {
                       <p className="text-xs text-neutral-500">entrées</p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </Card>
-
-          {/* Metric Leaders */}
-          {metricLeaders.length > 0 && (
-            <Card>
-              <h2 className="text-2xl font-black text-black mb-6">Leaders par métrique</h2>
-              <p className="text-sm text-neutral-600 mb-4">
-                Seulement les métriques avec au moins 2 membres ayant des entrées
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {metricLeaders.map((leader) => (
-                  <div
-                    key={`${leader.category}-${leader.metric}`}
-                    className={`p-4 border-2 border-black shadow-neo-sm ${
-                      leader.userId === user?.id ? 'bg-accent-50' : 'bg-neutral-50'
-                    }`}
-                  >
-                    <h3 className="font-bold text-black capitalize mb-1">
-                      {leader.metric.replace(/_/g, ' ')}
-                    </h3>
-                    <p className="text-xs text-neutral-500 mb-2 capitalize">
-                      {leader.category.replace(/_/g, ' ')}
-                    </p>
-                    <p className="text-sm text-neutral-600 mb-2">
-                      {leader.userId === user?.id ? 'Toi!' : leader.name}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-accent-600" />
-                      <p className="text-lg font-black text-black">{leader.count} entrées</p>
-                    </div>
-                    <p className="text-xs text-neutral-500 mt-1">
-                      Moy: {leader.avgValue.toFixed(1)}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </Card>
-          )}
-        </>
-      )}
+            </div>
+
+            {/* Metric Leaders */}
+            {metricLeaders.length > 0 && (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <h2 className="text-2xl font-black text-black mb-6">Leaders par métrique</h2>
+                <p className="text-sm text-neutral-600 mb-4">
+                  Seulement les métriques avec au moins 2 membres ayant des entrées
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {metricLeaders.map((leader) => (
+                    <div
+                      key={`${leader.category}-${leader.metric}`}
+                      className={`p-4 border-2 border-black shadow-neo-sm ${
+                        leader.userId === user?.id ? 'bg-accent-50' : 'bg-neutral-50'
+                      }`}
+                    >
+                      <h3 className="font-bold text-black capitalize mb-1">
+                        {leader.metric.replace(/_/g, ' ')}
+                      </h3>
+                      <p className="text-xs text-neutral-500 mb-2 capitalize">
+                        {leader.category.replace(/_/g, ' ')}
+                      </p>
+                      <p className="text-sm text-neutral-600 mb-2">
+                        {leader.userId === user?.id ? 'Toi!' : leader.name}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-accent-600" />
+                        <p className="text-lg font-black text-black">{leader.count} entrées</p>
+                      </div>
+                      <p className="text-xs text-neutral-500 mt-1">
+                        Moy: {leader.avgValue.toFixed(1)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
