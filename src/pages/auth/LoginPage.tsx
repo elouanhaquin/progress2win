@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { Button, Input, Card, Alert } from '../../components/UI';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 
@@ -19,7 +18,7 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
@@ -59,86 +58,111 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#FFF5E1] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-primary-500 border-4 border-black shadow-neo-xl mx-auto mb-4 flex items-center justify-center">
-            <span className="text-white text-3xl font-black">P2W</span>
+          <div className="w-20 h-20 bg-[#9D4EDD] border-3 border-black rounded-2xl shadow-[5px_5px_0_0_rgba(0,0,0,1)] mx-auto mb-4 flex items-center justify-center">
+            <span className="text-white text-3xl font-display">P2W</span>
           </div>
-          <h1 className="text-3xl font-black text-black">Bienvenue!</h1>
-          <p className="text-neutral-600 font-medium">Connecte-toi pour continuer tes progrès</p>
+          <h1 className="text-3xl font-display text-black">Bienvenue!</h1>
+          <p className="text-black/70">Connecte-toi pour continuer tes progrès</p>
         </div>
 
-        <Card>
-          <form onSubmit={handleSubmit(onSubmit)} className="form-neo" noValidate>
+        <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
             {error && (
-              <Alert variant="danger" className="mb-6">
-                {error}
-              </Alert>
+              <div className="mb-6 bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                <p className="text-sm text-black">{error}</p>
+              </div>
             )}
 
-            <div className="space-y-6">
-              <Input
-                label="Adresse email"
-                type="email"
-                placeholder="Entre ton email"
-                icon={<Mail className="w-5 h-5" />}
-                error={errors.email?.message}
-                {...register('email')}
-              />
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm text-black mb-2">Adresse email</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-black/50">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Entre ton email"
+                    className={`w-full pl-11 pr-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white ${
+                      errors.email ? 'border-red-500' : ''
+                    }`}
+                    {...register('email')}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-xs text-red-600 mt-1">{errors.email.message}</p>
+                )}
+              </div>
 
-              <div className="relative">
-                <Input
-                  label="Mot de passe"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Entre ton mot de passe"
-                  icon={<Lock className="w-5 h-5" />}
-                  error={errors.password?.message}
-                  {...register('password')}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-neutral-500 hover:text-black transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+              <div>
+                <label className="block text-sm text-black mb-2">Mot de passe</label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-black/50">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Entre ton mot de passe"
+                    className={`w-full pl-11 pr-12 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white ${
+                      errors.password ? 'border-red-500' : ''
+                    }`}
+                    {...register('password')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black/50 hover:text-black transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-xs text-red-600 mt-1">{errors.password.message}</p>
+                )}
               </div>
 
               <div className="flex items-center justify-between">
                 <Link
                   to="/forgot-password"
-                  className="text-sm font-semibold text-primary-600 hover:text-primary-800 transition-colors"
+                  className="text-sm font-semibold text-[#9D4EDD] hover:text-[#7B2CBF] transition-colors"
                 >
                   Mot de passe oublié?
                 </Link>
               </div>
 
-              <Button
+              <button
                 type="submit"
-                variant="primary"
-                size="lg"
-                loading={isLoading}
-                className="w-full"
+                disabled={isLoading}
+                className="w-full bg-[#9D4EDD] border-2 border-black rounded-xl font-semibold text-white py-3 px-5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Connexion
-              </Button>
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Connexion...
+                  </>
+                ) : (
+                  'Connexion'
+                )}
+              </button>
             </div>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-black/70">
               Pas de compte?{' '}
               <Link
                 to="/register"
-                className="font-semibold text-primary-600 hover:text-primary-800 transition-colors"
+                className="font-semibold text-[#9D4EDD] hover:text-[#7B2CBF] transition-colors"
               >
                 Inscris-toi ici
               </Link>
             </p>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

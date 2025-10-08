@@ -173,12 +173,12 @@ const ComparePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full bg-[#FFF5E1]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
         {/* Header */}
-        <div className="bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
-          <h1 className="text-4xl font-black text-black">Comparer les progrès</h1>
-          <p className="text-lg text-neutral-700 mt-2">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-display text-black">Comparer les progrès</h1>
+          <p className="text-base sm:text-lg text-black/70 mt-1">
             {group ? 'Compare tes progrès fitness avec ton groupe' : 'Crée ou rejoins un groupe pour comparer avec tes amis'}
           </p>
         </div>
@@ -190,103 +190,110 @@ const ComparePage: React.FC = () => {
         )}
 
         {!group ? (
-          <div className="bg-white border-2 border-black shadow-neo p-6">
+          <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
             <div className="text-center py-12">
-              <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
-              <p className="text-neutral-600 mb-4">Crée ou rejoins un groupe pour commencer à comparer!</p>
-              <div className="flex gap-3 justify-center">
-                <Button variant="accent" onClick={() => setShowCreateModal(true)}>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFD93D] border-3 border-black rounded-xl mb-4">
+                <Users className="w-8 h-8 text-black" />
+              </div>
+              <h3 className="text-lg font-semibold text-black mb-2">Aucun groupe</h3>
+              <p className="text-black/60 mb-4">Crée ou rejoins un groupe pour commencer à comparer!</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="bg-[#FFD93D] border-2 border-black rounded-xl font-semibold text-black py-2 px-4 shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150"
+                >
                   Créer un groupe
-                </Button>
-                <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
+                </button>
+                <button
+                  onClick={() => setShowJoinModal(true)}
+                  className="bg-white border-2 border-black rounded-xl font-semibold text-black py-2 px-4 shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150"
+                >
                   Rejoindre un groupe
-                </Button>
+                </button>
               </div>
             </div>
           </div>
         ) : (
           <>
             {/* Group Info Card */}
-            <div className="bg-white border-2 border-black shadow-neo p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h2 className="text-2xl font-black text-black mb-2">{group.name}</h2>
-                {group.description && (
-                  <p className="text-neutral-600 mb-3">{group.description}</p>
-                )}
-                <CodeDisplay code={group.code} />
+            <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-display text-black mb-2">{group.name}</h2>
+                  {group.description && (
+                    <p className="text-black/60 mb-3">{group.description}</p>
+                  )}
+                  <CodeDisplay code={group.code} />
+                </div>
+                <button
+                  onClick={handleLeaveGroup}
+                  className="w-full sm:w-auto bg-white border-2 border-black rounded-xl font-semibold text-black py-2 px-4 shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150 flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Quitter
+                </button>
               </div>
-              <Button
-                variant="danger"
-                size="sm"
-                icon={<LogOut className="w-4 h-4" />}
-                onClick={handleLeaveGroup}
-              >
-                Quitter
-              </Button>
-            </div>
 
-            <div className="border-t-2 border-black pt-4 mt-4">
-              <h3 className="text-sm font-bold text-black mb-3">Membres ({group.members.length})</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {group.members.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center p-3 bg-neutral-50 border-2 border-black"
-                  >
-                    <div className="w-8 h-8 bg-primary-500 border-2 border-black mr-2 flex items-center justify-center">
-                      <span className="text-white font-bold text-xs">
-                        {member.first_name[0]}{member.last_name[0]}
+              <div className="border-t-2 border-black pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-black mb-3">Membres ({group.members.length})</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {group.members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center p-3 bg-[#FFF5E1] border-2 border-black rounded-xl"
+                    >
+                      <div className="w-8 h-8 bg-[#9D4EDD] border-2 border-black rounded-lg mr-2 flex items-center justify-center">
+                        <span className="text-white font-semibold text-xs">
+                          {member.first_name[0]}{member.last_name[0]}
+                        </span>
+                      </div>
+                      <span className="font-medium text-black text-sm truncate">
+                        {member.first_name} {member.last_name}
                       </span>
                     </div>
-                    <span className="font-medium text-black text-sm truncate">
-                      {member.first_name} {member.last_name}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-neutral-600">Total entrées</p>
-                    <p className="text-3xl font-black text-black">{groupProgress.length}</p>
+                    <p className="text-sm text-black/70">Total entrées</p>
+                    <p className="text-3xl font-bold text-black mt-1">{groupProgress.length}</p>
                   </div>
-                  <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#9D4EDD] border-2 border-black rounded-xl flex items-center justify-center shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                     <BarChart3 className="w-6 h-6 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-neutral-600">Membres</p>
-                    <p className="text-3xl font-black text-black">{group.members.length}</p>
+                    <p className="text-sm text-black/70">Membres</p>
+                    <p className="text-3xl font-bold text-black mt-1">{group.members.length}</p>
                   </div>
-                  <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#9D4EDD] border-2 border-black rounded-xl flex items-center justify-center shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                     <Users className="w-6 h-6 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-neutral-600">Plus actif</p>
-                    <p className="text-lg font-black text-black">
+                    <p className="text-sm text-black/70">Plus actif</p>
+                    <p className="text-lg font-bold text-black mt-1">
                       {topPerformer ? topPerformer.name : 'N/A'}
                     </p>
                     {topPerformer && (
-                      <p className="text-xs text-neutral-600">{topPerformer.count} entrées</p>
+                      <p className="text-xs text-black/60">{topPerformer.count} entrées</p>
                     )}
                   </div>
-                  <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#FFD93D] border-2 border-black rounded-xl flex items-center justify-center shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                     <Trophy className="w-6 h-6 text-black" />
                   </div>
                 </div>
@@ -295,27 +302,29 @@ const ComparePage: React.FC = () => {
 
             {/* Comparison Charts */}
             {isLoadingProgress ? (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-center py-12">
                   <LoadingSpinner size="lg" />
                 </div>
               </div>
             ) : comparisonData.length === 0 ? (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
+              <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
                 <div className="text-center py-12">
-                  <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-bold text-black mb-2">Aucune donnée comparable</h3>
-                  <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir les comparaisons!</p>
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFD93D] border-3 border-black rounded-xl mb-4">
+                    <BarChart3 className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-black mb-2">Aucune donnée comparable</h3>
+                  <p className="text-black/60">Commence à enregistrer tes progrès pour voir les comparaisons!</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {comparisonData.map((comparison, idx) => (
-                  <div key={idx} className="bg-white border-2 border-black shadow-neo p-6">
-                    <h3 className="text-xl font-black text-black mb-4">
+                  <div key={idx} className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                    <h3 className="text-xl font-display text-black mb-4 capitalize">
                       {comparison.category.replace(/_/g, ' ')} - {comparison.metric.replace(/_/g, ' ')}
                     </h3>
-                    <div className="border-2 border-black bg-neutral-50 p-4">
+                    <div className="border-2 border-black bg-[#FFF5E1] rounded-xl p-4 shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                       <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={comparison.data}>
                           <CartesianGrid
@@ -340,16 +349,16 @@ const ComparePage: React.FC = () => {
                           />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: '#fbbf24',
-                              border: '2px solid black',
+                              backgroundColor: '#FFD93D',
+                              border: '3px solid black',
                               borderRadius: '0',
-                              boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
+                              boxShadow: '3px 3px 0 0 rgba(0,0,0,1)',
                               fontWeight: 600,
                               padding: '8px 12px'
                             }}
                             labelStyle={{
                               color: '#000000',
-                              fontWeight: 700,
+                              fontWeight: 600,
                               marginBottom: '4px'
                             }}
                             itemStyle={{
@@ -431,15 +440,15 @@ const CodeDisplay: React.FC<{ code: string }> = ({ code }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 p-3 bg-accent-500 border-2 border-black shadow-neo-sm inline-flex">
-      <span className="text-xs font-bold text-neutral-600 mr-1">CODE:</span>
-      <code className="font-black text-black text-lg">{code}</code>
+    <div className="flex items-center gap-2 p-3 bg-[#FFD93D] border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] inline-flex">
+      <span className="text-xs font-semibold text-black/70 mr-1">CODE:</span>
+      <code className="font-bold text-black text-lg">{code}</code>
       <button
         onClick={handleCopy}
-        className="p-2 bg-white border-2 border-black hover:shadow-neo-sm transition-shadow ml-2"
+        className="p-2 bg-white border-2 border-black rounded-lg hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all ml-2"
       >
         {copied ? (
-          <Check className="w-4 h-4 text-green-600" />
+          <Check className="w-4 h-4 text-[#9D4EDD]" />
         ) : (
           <Copy className="w-4 h-4 text-black" />
         )}
@@ -475,49 +484,66 @@ const CreateGroupModal: React.FC<{
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <Card className="w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-lg bg-[#FFF5E1] border-3 border-black rounded-2xl shadow-[8px_8px_0_0_rgba(0,0,0,1)] relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-500 hover:text-black transition-colors"
+          className="absolute top-4 right-4 p-2 hover:bg-white rounded-lg transition-colors"
         >
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Créer un groupe</h2>
+        <div className="p-6 sm:p-8">
+          <h2 className="text-2xl sm:text-3xl font-display text-black mb-6">Créer un groupe</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <Alert variant="danger">{error}</Alert>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-red-100 border-2 border-black rounded-xl p-3">
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
 
-          <Input
-            label="Nom du groupe *"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Mon équipe fitness"
-            required
-          />
+            <div>
+              <label className="block text-sm text-black mb-2">Nom du groupe *</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Mon équipe fitness"
+                className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-bold text-black mb-2">Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description optionnelle..."
-              rows={3}
-              className="w-full px-4 py-3 border-2 border-black shadow-neo-sm focus:shadow-neo-md transition-all bg-white font-medium resize-none"
-            />
-          </div>
+            <div>
+              <label className="block text-sm text-black mb-2">Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description optionnelle..."
+                rows={3}
+                className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white resize-none"
+              />
+            </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-              Annuler
-            </Button>
-            <Button type="submit" variant="accent" loading={isLoading} className="flex-1">
-              Créer
-            </Button>
-          </div>
-        </form>
-      </Card>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 bg-white border-2 border-black rounded-lg font-semibold text-black py-2.5 px-6 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 bg-[#FFD93D] border-2 border-black rounded-lg font-semibold text-black py-2.5 px-6 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Création...' : 'Créer'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
@@ -548,39 +574,56 @@ const JoinGroupModal: React.FC<{
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <Card className="w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-lg bg-[#FFF5E1] border-3 border-black rounded-2xl shadow-[8px_8px_0_0_rgba(0,0,0,1)] relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-500 hover:text-black transition-colors"
+          className="absolute top-4 right-4 p-2 hover:bg-white rounded-lg transition-colors"
         >
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black text-black mb-6">Rejoindre un groupe</h2>
+        <div className="p-6 sm:p-8">
+          <h2 className="text-2xl sm:text-3xl font-display text-black mb-6">Rejoindre un groupe</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <Alert variant="danger">{error}</Alert>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-red-100 border-2 border-black rounded-xl p-3">
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
 
-          <Input
-            label="Code du groupe *"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="ABC123"
-            maxLength={6}
-            required
-          />
+            <div>
+              <label className="block text-sm text-black mb-2">Code du groupe *</label>
+              <input
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                placeholder="ABC123"
+                maxLength={6}
+                className="w-full px-4 py-2.5 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] focus:shadow-[3px_3px_0_0_rgba(0,0,0,1)] focus:outline-none transition-all bg-white"
+                required
+              />
+            </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-              Annuler
-            </Button>
-            <Button type="submit" variant="primary" loading={isLoading} className="flex-1">
-              Rejoindre
-            </Button>
-          </div>
-        </form>
-      </Card>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 bg-white border-2 border-black rounded-lg font-semibold text-black py-2.5 px-6 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 bg-[#9D4EDD] border-2 border-black rounded-lg font-semibold text-white py-2.5 px-6 shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'En cours...' : 'Rejoindre'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

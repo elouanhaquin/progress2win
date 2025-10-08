@@ -158,23 +158,28 @@ const LeaderboardPage: React.FC = () => {
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          <div className="bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
-            <h1 className="text-4xl font-black text-black">Classement</h1>
-            <p className="text-lg text-neutral-700 mt-2">
+      <div className="w-full bg-[#FFF5E1]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-display text-black">Classement</h1>
+            <p className="text-base sm:text-lg text-black/70 mt-1">
               Compare-toi avec les membres de ton groupe
             </p>
           </div>
 
-          <div className="bg-white border-2 border-black shadow-neo p-6">
+          <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
             <div className="text-center py-12">
-              <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
-              <p className="text-neutral-600 mb-4">Rejoins un groupe pour voir le classement!</p>
-              <Button variant="primary" onClick={() => window.location.href = '/compare'}>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFD93D] border-3 border-black rounded-xl mb-4">
+                <Users className="w-8 h-8 text-black" />
+              </div>
+              <h3 className="text-lg font-semibold text-black mb-2">Aucun groupe</h3>
+              <p className="text-black/60 mb-4">Rejoins un groupe pour voir le classement!</p>
+              <button
+                onClick={() => window.location.href = '/compare'}
+                className="bg-[#9D4EDD] border-2 border-black rounded-xl font-semibold text-white py-2 px-4 shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150"
+              >
                 Aller à Comparer
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -183,20 +188,20 @@ const LeaderboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full bg-[#FFF5E1]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-black">Classement</h1>
-            <p className="text-lg text-neutral-700 mt-2">
+            <h1 className="text-3xl sm:text-4xl font-display text-black">Classement</h1>
+            <p className="text-base sm:text-lg text-black/70 mt-1">
               {group.name} - Qui est au top?
             </p>
           </div>
           {myRank > 0 && (
-            <Badge variant="accent" className="text-lg px-4 py-2">
+            <span className="px-3 py-1 text-sm font-semibold border-2 border-black rounded-lg text-white bg-[#9D4EDD]">
               Ton rang: #{myRank}
-            </Badge>
+            </span>
           )}
         </div>
 
@@ -207,102 +212,103 @@ const LeaderboardPage: React.FC = () => {
         )}
 
         {leaderboard.length === 0 ? (
-          <div className="bg-white border-2 border-black shadow-neo p-6">
+          <div className="bg-white border-3 border-black rounded-2xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
             <div className="text-center py-12">
-              <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-black mb-2">Aucune donnée</h3>
-              <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir le classement!</p>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFD93D] border-3 border-black rounded-xl mb-4">
+                <BarChart3 className="w-8 h-8 text-black" />
+              </div>
+              <h3 className="text-lg font-semibold text-black mb-2">Aucune donnée</h3>
+              <p className="text-black/60">Commence à enregistrer tes progrès pour voir le classement!</p>
             </div>
           </div>
         ) : (
           <>
             {/* Top 3 Podium */}
             {top3.length >= 3 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* 2nd Place */}
                 {top3[1] && (
-                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[1].userId === user?.id ? 'bg-secondary-50 border-secondary-700' : ''}`}>
-                  <div className="w-16 h-16 bg-secondary-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
-                    <Medal className="w-8 h-8 text-white" />
-                  </div>
-                    <h3 className="text-lg font-bold text-black">
+                  <div className={`bg-white border-3 border-black rounded-2xl p-5 text-center shadow-[5px_5px_0_0_rgba(0,0,0,1)] ${top3[1].userId === user?.id ? 'bg-[#FFD93D]' : ''}`}>
+                    <div className="w-16 h-16 bg-[#9D4EDD] border-2 border-black rounded-xl mx-auto mb-4 flex items-center justify-center shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                      <Medal className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
                       {top3[1].userId === user?.id ? 'Toi!' : top3[1].name}
                     </h3>
-                    <p className="text-sm text-neutral-600">{top3[1].totalEntries} entrées</p>
-                    <Badge variant="secondary" className="mt-2">#2</Badge>
+                    <p className="text-sm text-black/60">{top3[1].totalEntries} entrées</p>
+                    <span className="inline-block mt-2 px-3 py-1 text-xs font-semibold border-2 border-black rounded-lg text-white bg-[#9D4EDD]">#2</span>
                   </div>
                 )}
 
                 {/* 1st Place */}
                 {top3[0] && (
-                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[0].userId === user?.id ? 'bg-accent-50 border-accent-700' : 'bg-accent-50'}`}>
-                    <div className="w-20 h-20 bg-accent-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                  <div className={`bg-white border-3 border-black rounded-2xl p-5 text-center shadow-[5px_5px_0_0_rgba(0,0,0,1)] ${top3[0].userId === user?.id ? 'bg-[#FFD93D]' : 'bg-[#FFF5E1]'}`}>
+                    <div className="w-20 h-20 bg-[#FFD93D] border-3 border-black rounded-xl mx-auto mb-4 flex items-center justify-center shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
                       <Crown className="w-10 h-10 text-black" />
                     </div>
-                    <h3 className="text-xl font-black text-black">
+                    <h3 className="text-xl font-display text-black">
                       {top3[0].userId === user?.id ? 'Toi!' : top3[0].name}
                     </h3>
-                    <p className="text-base text-neutral-600 font-semibold">{top3[0].totalEntries} entrées</p>
-                    <Badge variant="accent" className="mt-2">#1</Badge>
+                    <p className="text-base text-black/60 font-semibold">{top3[0].totalEntries} entrées</p>
+                    <span className="inline-block mt-2 px-3 py-1 text-xs font-semibold border-2 border-black rounded-lg text-black bg-[#FFD93D]">#1</span>
                   </div>
                 )}
 
                 {/* 3rd Place */}
                 {top3[2] && (
-                  <div className={`bg-white border-2 border-black shadow-neo p-6 text-center ${top3[2].userId === user?.id ? 'bg-primary-50 border-primary-700' : ''}`}>
-                    <div className="w-16 h-16 bg-primary-500 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                  <div className={`bg-white border-3 border-black rounded-2xl p-5 text-center shadow-[5px_5px_0_0_rgba(0,0,0,1)] ${top3[2].userId === user?.id ? 'bg-[#FFD93D]' : ''}`}>
+                    <div className="w-16 h-16 bg-[#9D4EDD] border-2 border-black rounded-xl mx-auto mb-4 flex items-center justify-center shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
                       <Medal className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-black">
+                    <h3 className="text-lg font-semibold text-black">
                       {top3[2].userId === user?.id ? 'Toi!' : top3[2].name}
                     </h3>
-                    <p className="text-sm text-neutral-600">{top3[2].totalEntries} entrées</p>
-                    <Badge variant="primary" className="mt-2">#3</Badge>
+                    <p className="text-sm text-black/60">{top3[2].totalEntries} entrées</p>
+                    <span className="inline-block mt-2 px-3 py-1 text-xs font-semibold border-2 border-black rounded-lg text-white bg-[#9D4EDD]">#3</span>
                   </div>
                 )}
               </div>
             )}
 
             {/* Full Leaderboard */}
-            <div className="bg-white border-2 border-black shadow-neo p-6">
-            <h2 className="text-2xl font-black text-black mb-6">Classement complet</h2>
-            <div className="space-y-4">
-              {leaderboard.map((entry, index) => {
-                const rank = index + 1;
-                const isCurrentUser = entry.userId === user?.id;
+            <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+              <h2 className="text-xl sm:text-2xl font-display text-black mb-5">Classement complet</h2>
+              <div className="space-y-3">
+                {leaderboard.map((entry, index) => {
+                  const rank = index + 1;
+                  const isCurrentUser = entry.userId === user?.id;
 
-                return (
-                  <div
-                    key={entry.userId}
-                    className={`flex items-center justify-between p-4 border-2 border-black shadow-neo-sm ${
-                      isCurrentUser ? 'bg-accent-50 border-accent-700' : 'bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-10 h-10 border-2 border-black shadow-neo-sm flex items-center justify-center ${
-                        rank === 1 ? 'bg-accent-500' :
-                        rank === 2 ? 'bg-secondary-500' :
-                        rank === 3 ? 'bg-primary-500' : 'bg-neutral-300'
-                      }`}>
-                        {rank === 1 ? (
-                          <Crown className="w-5 h-5 text-black" />
-                        ) : rank <= 3 ? (
-                          <Medal className="w-5 h-5 text-white" />
-                        ) : (
-                          <span className="text-sm font-bold text-black">{rank}</span>
-                        )}
+                  return (
+                    <div
+                      key={entry.userId}
+                      className={`flex items-center justify-between p-4 border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] ${
+                        isCurrentUser ? 'bg-[#FFD93D]' : 'bg-[#FFF5E1]'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className={`w-10 h-10 border-2 border-black rounded-lg shadow-[2px_2px_0_0_rgba(0,0,0,1)] flex items-center justify-center ${
+                          rank === 1 ? 'bg-[#FFD93D]' :
+                          rank <= 3 ? 'bg-[#9D4EDD]' : 'bg-white'
+                        }`}>
+                          {rank === 1 ? (
+                            <Crown className="w-5 h-5 text-black" />
+                          ) : rank <= 3 ? (
+                            <Medal className="w-5 h-5 text-white" />
+                          ) : (
+                            <span className="text-sm font-semibold text-black">{rank}</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-black">
+                            {isCurrentUser ? 'Toi!' : entry.name}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-black">
-                          {isCurrentUser ? 'Toi!' : entry.name}
-                        </p>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-black">{entry.totalEntries}</p>
+                        <p className="text-xs text-black/60">entrées</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-black text-black">{entry.totalEntries}</p>
-                      <p className="text-xs text-neutral-500">entrées</p>
-                    </div>
-                  </div>
                   );
                 })}
               </div>
@@ -310,33 +316,33 @@ const LeaderboardPage: React.FC = () => {
 
             {/* Metric Leaders */}
             {metricLeaders.length > 0 && (
-              <div className="bg-white border-2 border-black shadow-neo p-6">
-                <h2 className="text-2xl font-black text-black mb-6">Leaders par métrique</h2>
-                <p className="text-sm text-neutral-600 mb-4">
+              <div className="bg-white border-3 border-black rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)]">
+                <h2 className="text-xl sm:text-2xl font-display text-black mb-4">Leaders par métrique</h2>
+                <p className="text-sm text-black/60 mb-4">
                   Seulement les métriques avec au moins 2 membres ayant des entrées
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {metricLeaders.map((leader) => (
                     <div
                       key={`${leader.category}-${leader.metric}`}
-                      className={`p-4 border-2 border-black shadow-neo-sm ${
-                        leader.userId === user?.id ? 'bg-accent-50' : 'bg-neutral-50'
+                      className={`p-4 border-2 border-black rounded-xl shadow-[2px_2px_0_0_rgba(0,0,0,1)] ${
+                        leader.userId === user?.id ? 'bg-[#FFD93D]' : 'bg-[#FFF5E1]'
                       }`}
                     >
-                      <h3 className="font-bold text-black capitalize mb-1">
+                      <h3 className="font-semibold text-black capitalize mb-1">
                         {leader.metric.replace(/_/g, ' ')}
                       </h3>
-                      <p className="text-xs text-neutral-500 mb-2 capitalize">
+                      <p className="text-xs text-black/50 mb-2 capitalize">
                         {leader.category.replace(/_/g, ' ')}
                       </p>
-                      <p className="text-sm text-neutral-600 mb-2">
+                      <p className="text-sm text-black/70 mb-2">
                         {leader.userId === user?.id ? 'Toi!' : leader.name}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Trophy className="w-4 h-4 text-accent-600" />
-                        <p className="text-lg font-black text-black">{leader.count} entrées</p>
+                        <Trophy className="w-4 h-4 text-[#9D4EDD]" />
+                        <p className="text-lg font-bold text-black">{leader.count} entrées</p>
                       </div>
-                      <p className="text-xs text-neutral-500 mt-1">
+                      <p className="text-xs text-black/60 mt-1">
                         Moy: {leader.avgValue.toFixed(1)}
                       </p>
                     </div>
