@@ -21,6 +21,8 @@ import {
 // Helper for Express API calls
 class ExpressApiClient {
   private baseUrl: string;
+  private isRefreshing: boolean = false;
+  private refreshSubscribers: ((token: string) => void)[] = [];
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -40,6 +42,71 @@ class ExpressApiClient {
     return null;
   }
 
+  private getRefreshToken(): string | null {
+    try {
+      const authStorage = localStorage.getItem('auth-storage');
+      if (authStorage) {
+        const parsed = JSON.parse(authStorage);
+        return parsed.state?.refreshToken || null;
+      }
+    } catch (error) {
+      console.error('Failed to get refresh token:', error);
+    }
+    return null;
+  }
+
+  private updateTokens(accessToken: string, refreshToken: string) {
+    try {
+      const authStorage = localStorage.getItem('auth-storage');
+      if (authStorage) {
+        const parsed = JSON.parse(authStorage);
+        parsed.state.accessToken = accessToken;
+        parsed.state.refreshToken = refreshToken;
+        localStorage.setItem('auth-storage', JSON.stringify(parsed));
+      }
+    } catch (error) {
+      console.error('Failed to update tokens:', error);
+    }
+  }
+
+  private onRefreshed(token: string) {
+    this.refreshSubscribers.forEach(callback => callback(token));
+    this.refreshSubscribers = [];
+  }
+
+  private addRefreshSubscriber(callback: (token: string) => void) {
+    this.refreshSubscribers.push(callback);
+  }
+
+  private async refreshAccessToken(): Promise<string | null> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Refresh failed');
+      }
+
+      const data = await response.json();
+      this.updateTokens(data.accessToken, data.refreshToken);
+      return data.accessToken;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      // Clear auth and redirect to login
+      localStorage.removeItem('auth-storage');
+      window.location.href = '/';
+      return null;
+    }
+  }
+
   setToken(token: string) {
     // Token is managed by zustand store, this is just for backward compatibility
     console.log('Token set via API client');
@@ -52,7 +119,8 @@ class ExpressApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retry: boolean = true
   ): Promise<T> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -68,6 +136,31 @@ class ExpressApiClient {
       ...options,
       headers,
     });
+
+    // Handle 401 - token expired
+    if (response.status === 401 && retry && endpoint !== '/auth/refresh' && endpoint !== '/auth/login') {
+      if (!this.isRefreshing) {
+        this.isRefreshing = true;
+        const newToken = await this.refreshAccessToken();
+        this.isRefreshing = false;
+
+        if (newToken) {
+          this.onRefreshed(newToken);
+          // Retry original request with new token
+          return this.request<T>(endpoint, options, false);
+        }
+      } else {
+        // Wait for the refresh to complete
+        return new Promise((resolve, reject) => {
+          this.addRefreshSubscriber((token: string) => {
+            // Retry with new token
+            this.request<T>(endpoint, options, false)
+              .then(resolve)
+              .catch(reject);
+          });
+        });
+      }
+    }
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Request failed' }));

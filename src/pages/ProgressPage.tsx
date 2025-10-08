@@ -54,133 +54,135 @@ const ProgressPage: React.FC = () => {
   const categories = new Set(progressEntries.map((p) => p.category));
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">Suivi des progrès</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Surveille ton parcours vers le succès
-          </p>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">Suivi des progrès</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Surveille ton parcours vers le succès
+            </p>
+          </div>
+          <Button
+            variant="accent"
+            size="lg"
+            icon={<Plus className="w-5 h-5" />}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Ajouter Progrès
+          </Button>
         </div>
-        <Button
-          variant="accent"
-          size="lg"
-          icon={<Plus className="w-5 h-5" />}
-          onClick={() => setIsModalOpen(true)}
-        >
-          Ajouter Progrès
-        </Button>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Total Entrées</p>
-              <p className="text-3xl font-black text-black">{progressEntries.length}</p>
-            </div>
-            <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <BarChart3 className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Ce mois-ci</p>
-              <p className="text-3xl font-black text-black">{thisMonthCount}</p>
-            </div>
-            <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Catégories</p>
-              <p className="text-3xl font-black text-black">{categories.size}</p>
-            </div>
-            <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Target className="w-6 h-6 text-black" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Progress List */}
-      <Card>
-        <h2 className="text-2xl font-black text-black mb-6">Entrées récentes</h2>
-
-        {isLoading ? (
-          <div className="text-center py-12">
-            <LoadingSpinner size="lg" />
-          </div>
-        ) : progressEntries.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
-              <BarChart3 className="w-8 h-8 text-neutral-500" />
-            </div>
-            <h3 className="text-lg font-bold text-black mb-2">Aucune entrée encore</h3>
-            <p className="text-neutral-600 mb-4">Commence à suivre tes progrès aujourd'hui!</p>
-            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-              Ajouter ta première entrée
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {progressEntries.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex items-center justify-between p-4 border-2 border-black bg-white shadow-neo-sm hover:shadow-neo-md transition-shadow"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 text-xs font-bold bg-primary-500 border border-black text-white">
-                      {entry.category.toUpperCase()}
-                    </span>
-                    <h3 className="text-lg font-bold text-black">
-                      {entry.metric.replace(/_/g, ' ')}
-                    </h3>
-                  </div>
-                  <div className="mt-2 flex items-center gap-4 text-sm text-neutral-600">
-                    <span className="font-semibold">
-                      Valeur: <span className="text-black">{entry.value} {entry.unit || ''}</span>
-                    </span>
-                    <span>
-                      Date: {format(new Date(entry.date), 'MMM dd, yyyy')}
-                    </span>
-                  </div>
-                  {entry.notes && (
-                    <p className="mt-2 text-sm text-neutral-600">{entry.notes}</p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={<Trash2 className="w-4 h-4" />}
-                    onClick={() => handleDelete(entry.id)}
-                  >
-                    Supprimer
-                  </Button>
-                </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Total Entrées</p>
+                <p className="text-3xl font-black text-black">{progressEntries.length}</p>
               </div>
-            ))}
+              <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </div>
-        )}
-      </Card>
 
-      {/* Add Progress Modal */}
-      <AddProgressModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchProgress}
-      />
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Ce mois-ci</p>
+                <p className="text-3xl font-black text-black">{thisMonthCount}</p>
+              </div>
+              <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Catégories</p>
+                <p className="text-3xl font-black text-black">{categories.size}</p>
+              </div>
+              <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Target className="w-6 h-6 text-black" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress List */}
+        <div className="bg-white border-2 border-black shadow-neo p-6">
+          <h2 className="text-2xl font-black text-black mb-6">Entrées récentes</h2>
+
+          {isLoading ? (
+            <div className="text-center py-12">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : progressEntries.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-neutral-200 border-2 border-black shadow-neo-sm mx-auto mb-4 flex items-center justify-center">
+                <BarChart3 className="w-8 h-8 text-neutral-500" />
+              </div>
+              <h3 className="text-lg font-bold text-black mb-2">Aucune entrée encore</h3>
+              <p className="text-neutral-600 mb-4">Commence à suivre tes progrès aujourd'hui!</p>
+              <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+                Ajouter ta première entrée
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {progressEntries.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex items-center justify-between p-4 border-2 border-black bg-neutral-50 shadow-neo-sm hover:shadow-neo-md transition-shadow"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1 text-xs font-bold bg-primary-500 border border-black text-white">
+                        {entry.category.toUpperCase()}
+                      </span>
+                      <h3 className="text-lg font-bold text-black">
+                        {entry.metric.replace(/_/g, ' ')}
+                      </h3>
+                    </div>
+                    <div className="mt-2 flex items-center gap-4 text-sm text-neutral-600">
+                      <span className="font-semibold">
+                        Valeur: <span className="text-black">{entry.value} {entry.unit || ''}</span>
+                      </span>
+                      <span>
+                        Date: {format(new Date(entry.date), 'MMM dd, yyyy')}
+                      </span>
+                    </div>
+                    {entry.notes && (
+                      <p className="mt-2 text-sm text-neutral-600">{entry.notes}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={<Trash2 className="w-4 h-4" />}
+                      onClick={() => handleDelete(entry.id)}
+                    >
+                      Supprimer
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Add Progress Modal */}
+        <AddProgressModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={fetchProgress}
+        />
+      </div>
     </div>
   );
 };

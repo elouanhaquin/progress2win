@@ -25,13 +25,17 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 
 // CORS configuration
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.CORS_ORIGIN].filter(Boolean)
+  : [
+      'http://localhost:5173',    // Vite dev server
+      'http://localhost:1420',    // Tauri dev server
+      'https://tauri.localhost',  // Tauri production
+      process.env.CORS_ORIGIN || ''
+    ].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:1420',
-    'https://tauri.localhost',
-    process.env.CORS_ORIGIN || ''
-  ].filter(Boolean),
+  origin: allowedOrigins,
   credentials: true,
 }));
 

@@ -4,66 +4,67 @@ import { Card, Button, Badge } from '../components/UI';
 
 const NotificationsPage: React.FC = () => {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">Notifications</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Stay updated on your progress
-          </p>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">Notifications</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Stay updated on your progress
+            </p>
+          </div>
+          <div className="flex space-x-3">
+            <Button variant="neutral" size="sm">
+              Mark All Read
+            </Button>
+            <Button variant="danger" size="sm">
+              Clear All
+            </Button>
+          </div>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="neutral" size="sm">
-            Mark All Read
-          </Button>
-          <Button variant="danger" size="sm">
-            Clear All
-          </Button>
+
+        {/* Notification Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Unread</p>
+                <p className="text-3xl font-black text-black">3</p>
+              </div>
+              <div className="w-12 h-12 bg-danger-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Bell className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">This Week</p>
+                <p className="text-3xl font-black text-black">12</p>
+              </div>
+              <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <Info className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-neutral-600">Total</p>
+                <p className="text-3xl font-black text-black">47</p>
+              </div>
+              <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Notification Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Unread</p>
-              <p className="text-3xl font-black text-black">3</p>
-            </div>
-            <div className="w-12 h-12 bg-danger-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Bell className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">This Week</p>
-              <p className="text-3xl font-black text-black">12</p>
-            </div>
-            <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <Info className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-neutral-600">Total</p>
-              <p className="text-3xl font-black text-black">47</p>
-            </div>
-            <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Notifications List */}
-      <Card>
+        {/* Notifications List */}
+        <div className="bg-white border-2 border-black shadow-neo p-6">
         <h2 className="text-2xl font-black text-black mb-6">Recent Notifications</h2>
         <div className="space-y-4">
           {/* Mock notifications */}
@@ -153,10 +154,11 @@ const NotificationsPage: React.FC = () => {
                 </p>
                 <p className="text-xs text-neutral-400 mt-2">{notification.time}</p>
               </div>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

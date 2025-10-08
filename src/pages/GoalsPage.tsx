@@ -135,44 +135,45 @@ const GoalsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-black">Objectifs</h1>
-          <p className="text-lg text-neutral-600 font-medium mt-2">
-            Définis tes objectifs et suis tes progrès
-          </p>
-        </div>
-        <Button
-          variant="accent"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={() => setShowCreateModal(true)}
-        >
-          Ajouter un objectif
-        </Button>
-      </div>
-
-      {error && (
-        <Alert variant="danger" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
-      {goals.length === 0 ? (
-        <Card>
-          <div className="text-center py-12">
-            <Target className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">Aucun objectif</h3>
-            <p className="text-neutral-600 mb-4">Définis ton premier objectif fitness et commence à suivre!</p>
-            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-              Créer un objectif
-            </Button>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <div>
+            <h1 className="text-4xl font-black text-black">Objectifs</h1>
+            <p className="text-lg text-neutral-700 mt-2">
+              Définis tes objectifs et suis tes progrès
+            </p>
           </div>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {goals.map((goal) => {
+          <Button
+            variant="accent"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => setShowCreateModal(true)}
+          >
+            Ajouter un objectif
+          </Button>
+        </div>
+
+        {error && (
+          <Alert variant="danger" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+
+        {goals.length === 0 ? (
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="text-center py-12">
+              <Target className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-black mb-2">Aucun objectif</h3>
+              <p className="text-neutral-600 mb-4">Définis ton premier objectif fitness et commence à suivre!</p>
+              <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+                Créer un objectif
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {goals.map((goal) => {
             const { currentValue, progressPercent, chartData, trend } = getGoalProgress(goal);
             const daysRemaining = getDaysRemaining(goal.deadline);
 
@@ -188,10 +189,10 @@ const GoalsPage: React.FC = () => {
               var yMax = Math.ceil(maxValue + padding);
             }
 
-            return (
-              <Card key={goal.id} className="relative">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
+              return (
+                <div key={goal.id} className="bg-white border-2 border-black shadow-neo p-6 relative">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl font-black text-black capitalize">
                       {goal.metric.replace(/_/g, ' ')}
@@ -249,88 +250,89 @@ const GoalsPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Chart */}
-                {chartData.length > 0 ? (
-                  <div className="border-4 border-black bg-white p-4 shadow-neo-sm">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="0" stroke="#000000" strokeWidth={2} vertical={false} />
-                        <XAxis
-                          dataKey="date"
-                          stroke="#000000"
-                          strokeWidth={3}
-                          tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
-                        />
-                        <YAxis
-                          stroke="#000000"
-                          strokeWidth={3}
-                          tick={{ fill: '#000000', fontWeight: 800 }}
-                          domain={[yMin, yMax]}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#fbbf24',
-                            border: '3px solid black',
-                            boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
-                            fontWeight: 'bold',
-                          }}
-                        />
-                        {/* Target line */}
-                        <ReferenceLine
-                          y={goal.targetValue}
-                          stroke="#10b981"
-                          strokeWidth={3}
-                          strokeDasharray="5 5"
-                          label={{
-                            value: 'Cible',
-                            position: 'right',
-                            fill: '#10b981',
-                            fontWeight: 800,
-                          }}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="value"
-                          stroke="#000000"
-                          strokeWidth={4}
-                          dot={{ fill: '#3b82f6', stroke: '#000000', strokeWidth: 2, r: 6 }}
-                          activeDot={{ r: 8, stroke: '#000000', strokeWidth: 2 }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                ) : (
-                  <div className="border-4 border-black bg-neutral-50 p-8 text-center">
-                    <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-2" />
-                    <p className="text-sm text-neutral-600 font-medium">
-                      Aucune donnée de progrès. Commence à enregistrer!
-                    </p>
-                  </div>
-                )}
+                  {/* Chart */}
+                  {chartData.length > 0 ? (
+                    <div className="border-2 border-black bg-neutral-50 p-4">
+                      <ResponsiveContainer width="100%" height={200}>
+                        <LineChart data={chartData}>
+                          <CartesianGrid strokeDasharray="0" stroke="#000000" strokeWidth={1} vertical={false} />
+                          <XAxis
+                            dataKey="date"
+                            stroke="#000000"
+                            strokeWidth={2}
+                            tick={{ fill: '#000000', fontWeight: 600, fontSize: 12 }}
+                          />
+                          <YAxis
+                            stroke="#000000"
+                            strokeWidth={2}
+                            tick={{ fill: '#000000', fontWeight: 600 }}
+                            domain={[yMin, yMax]}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#fbbf24',
+                              border: '2px solid black',
+                              boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
+                              fontWeight: 600,
+                            }}
+                          />
+                          {/* Target line */}
+                          <ReferenceLine
+                            y={goal.targetValue}
+                            stroke="#10b981"
+                            strokeWidth={2}
+                            strokeDasharray="5 5"
+                            label={{
+                              value: 'Cible',
+                              position: 'right',
+                              fill: '#10b981',
+                              fontWeight: 700,
+                            }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#000000"
+                            strokeWidth={3}
+                            dot={{ fill: '#3b82f6', stroke: '#000000', strokeWidth: 2, r: 5 }}
+                            activeDot={{ r: 7, stroke: '#000000', strokeWidth: 2 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-black bg-neutral-50 p-8 text-center">
+                      <BarChart3 className="w-12 h-12 text-neutral-400 mx-auto mb-2" />
+                      <p className="text-sm text-neutral-600 font-medium">
+                        Aucune donnée de progrès. Commence à enregistrer!
+                      </p>
+                    </div>
+                  )}
 
-                {/* Achievement badge */}
-                {progressPercent >= 100 && (
-                  <div className="mt-4 p-3 bg-success-500 border-2 border-black shadow-neo-sm flex items-center gap-2">
-                    <Award className="w-5 h-5 text-black" />
-                    <span className="font-black text-black">Objectif atteint! 🎉</span>
-                  </div>
-                )}
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                  {/* Achievement badge */}
+                  {progressPercent >= 100 && (
+                    <div className="mt-4 p-3 bg-success-500 border-2 border-black shadow-neo-sm flex items-center gap-2">
+                      <Award className="w-5 h-5 text-black" />
+                      <span className="font-black text-black">Objectif atteint! 🎉</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-      {/* Create Goal Modal */}
-      {showCreateModal && (
-        <CreateGoalModal
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={(goal) => {
-            addGoal(goal);
-            setShowCreateModal(false);
-          }}
-        />
-      )}
+        {/* Create Goal Modal */}
+        {showCreateModal && (
+          <CreateGoalModal
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={(goal) => {
+              addGoal(goal);
+              setShowCreateModal(false);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };

@@ -173,41 +173,42 @@ const ComparePage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-4xl font-black text-black">Comparer les progrès</h1>
-        <p className="text-lg text-neutral-600 font-medium mt-2">
-          {group ? 'Compare tes progrès fitness avec ton groupe' : 'Crée ou rejoins un groupe pour comparer avec tes amis'}
-        </p>
-      </div>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+          <h1 className="text-4xl font-black text-black">Comparer les progrès</h1>
+          <p className="text-lg text-neutral-700 mt-2">
+            {group ? 'Compare tes progrès fitness avec ton groupe' : 'Crée ou rejoins un groupe pour comparer avec tes amis'}
+          </p>
+        </div>
 
-      {error && (
-        <Alert variant="danger" onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
+        {error && (
+          <Alert variant="danger" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
 
-      {!group ? (
-        <Card>
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
-            <p className="text-neutral-600 mb-4">Crée ou rejoins un groupe pour commencer à comparer!</p>
-            <div className="flex gap-3 justify-center">
-              <Button variant="accent" onClick={() => setShowCreateModal(true)}>
-                Créer un groupe
-              </Button>
-              <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
-                Rejoindre un groupe
-              </Button>
+        {!group ? (
+          <div className="bg-white border-2 border-black shadow-neo p-6">
+            <div className="text-center py-12">
+              <Users className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-black mb-2">Aucun groupe</h3>
+              <p className="text-neutral-600 mb-4">Crée ou rejoins un groupe pour commencer à comparer!</p>
+              <div className="flex gap-3 justify-center">
+                <Button variant="accent" onClick={() => setShowCreateModal(true)}>
+                  Créer un groupe
+                </Button>
+                <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
+                  Rejoindre un groupe
+                </Button>
+              </div>
             </div>
           </div>
-        </Card>
-      ) : (
-        <>
-          {/* Group Info Card */}
-          <Card>
+        ) : (
+          <>
+            {/* Group Info Card */}
+            <div className="bg-white border-2 border-black shadow-neo p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <h2 className="text-2xl font-black text-black mb-2">{group.name}</h2>
@@ -246,174 +247,175 @@ const ComparePage: React.FC = () => {
                 ))}
               </div>
             </div>
-          </Card>
+            </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-600">Total entrées</p>
-                  <p className="text-3xl font-black text-black">{groupProgress.length}</p>
-                </div>
-                <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-white" />
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-600">Total entrées</p>
+                    <p className="text-3xl font-black text-black">{groupProgress.length}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-primary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
                 </div>
               </div>
-            </Card>
 
-            <Card>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-600">Membres</p>
-                  <p className="text-3xl font-black text-black">{group.members.length}</p>
-                </div>
-                <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-600">Membres</p>
+                    <p className="text-3xl font-black text-black">{group.members.length}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-secondary-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
                 </div>
               </div>
-            </Card>
 
-            <Card>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-600">Plus actif</p>
-                  <p className="text-lg font-black text-black">
-                    {topPerformer ? topPerformer.name : 'N/A'}
-                  </p>
-                  {topPerformer && (
-                    <p className="text-xs text-neutral-600">{topPerformer.count} entrées</p>
-                  )}
-                </div>
-                <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-black" />
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-600">Plus actif</p>
+                    <p className="text-lg font-black text-black">
+                      {topPerformer ? topPerformer.name : 'N/A'}
+                    </p>
+                    {topPerformer && (
+                      <p className="text-xs text-neutral-600">{topPerformer.count} entrées</p>
+                    )}
+                  </div>
+                  <div className="w-12 h-12 bg-accent-500 border-2 border-black shadow-neo-sm flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-black" />
+                  </div>
                 </div>
               </div>
-            </Card>
-          </div>
+            </div>
 
-          {/* Comparison Charts */}
-          {isLoadingProgress ? (
-            <Card>
-              <div className="flex items-center justify-center py-12">
-                <LoadingSpinner size="lg" />
+            {/* Comparison Charts */}
+            {isLoadingProgress ? (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <div className="flex items-center justify-center py-12">
+                  <LoadingSpinner size="lg" />
+                </div>
               </div>
-            </Card>
-          ) : comparisonData.length === 0 ? (
-            <Card>
-              <div className="text-center py-12">
-                <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-black mb-2">Aucune donnée comparable</h3>
-                <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir les comparaisons!</p>
+            ) : comparisonData.length === 0 ? (
+              <div className="bg-white border-2 border-black shadow-neo p-6">
+                <div className="text-center py-12">
+                  <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-black mb-2">Aucune donnée comparable</h3>
+                  <p className="text-neutral-600">Commence à enregistrer tes progrès pour voir les comparaisons!</p>
+                </div>
               </div>
-            </Card>
-          ) : (
-            <div className="space-y-6">
-              {comparisonData.map((comparison, idx) => (
-                <Card key={idx}>
-                  <h3 className="text-xl font-black text-black mb-4">
-                    {comparison.category.replace(/_/g, ' ')} - {comparison.metric.replace(/_/g, ' ')}
-                  </h3>
-                  <div className="border-4 border-black bg-white p-4">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={comparison.data}>
-                        <CartesianGrid
-                          strokeDasharray="0"
-                          stroke="#000000"
-                          strokeWidth={2}
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="date"
-                          stroke="#000000"
-                          strokeWidth={3}
-                          tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
-                          axisLine={{ stroke: '#000000', strokeWidth: 3 }}
-                        />
-                        <YAxis
-                          stroke="#000000"
-                          strokeWidth={3}
-                          tick={{ fill: '#000000', fontWeight: 800, fontSize: 12 }}
-                          axisLine={{ stroke: '#000000', strokeWidth: 3 }}
-                          domain={[comparison.yMin, comparison.yMax]}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#fbbf24',
-                            border: '3px solid black',
-                            borderRadius: '0',
-                            boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
-                            fontWeight: 800,
-                            padding: '8px 12px'
-                          }}
-                          labelStyle={{
-                            color: '#000000',
-                            fontWeight: 800,
-                            marginBottom: '4px'
-                          }}
-                          itemStyle={{
-                            color: '#000000',
-                            fontWeight: 700
-                          }}
-                        />
-                        <Legend
-                          wrapperStyle={{
-                            fontWeight: 800,
-                            paddingTop: '16px'
-                          }}
-                          iconType="rect"
-                        />
-                        {comparison.userNames.map((name, i) => (
-                          <Line
-                            key={name}
-                            type="monotone"
-                            dataKey={name}
+            ) : (
+              <div className="space-y-6">
+                {comparisonData.map((comparison, idx) => (
+                  <div key={idx} className="bg-white border-2 border-black shadow-neo p-6">
+                    <h3 className="text-xl font-black text-black mb-4">
+                      {comparison.category.replace(/_/g, ' ')} - {comparison.metric.replace(/_/g, ' ')}
+                    </h3>
+                    <div className="border-2 border-black bg-neutral-50 p-4">
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={comparison.data}>
+                          <CartesianGrid
+                            strokeDasharray="0"
                             stroke="#000000"
-                            strokeWidth={4}
-                            dot={{
-                              fill: colors[i % colors.length],
-                              stroke: '#000000',
-                              strokeWidth: 3,
-                              r: 6
+                            strokeWidth={1}
+                            vertical={false}
+                          />
+                          <XAxis
+                            dataKey="date"
+                            stroke="#000000"
+                            strokeWidth={2}
+                            tick={{ fill: '#000000', fontWeight: 600, fontSize: 12 }}
+                            axisLine={{ stroke: '#000000', strokeWidth: 2 }}
+                          />
+                          <YAxis
+                            stroke="#000000"
+                            strokeWidth={2}
+                            tick={{ fill: '#000000', fontWeight: 600, fontSize: 12 }}
+                            axisLine={{ stroke: '#000000', strokeWidth: 2 }}
+                            domain={[comparison.yMin, comparison.yMax]}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#fbbf24',
+                              border: '2px solid black',
+                              borderRadius: '0',
+                              boxShadow: '4px 4px 0 0 rgba(0,0,0,1)',
+                              fontWeight: 600,
+                              padding: '8px 12px'
                             }}
-                            activeDot={{
-                              r: 8,
-                              stroke: '#000000',
-                              strokeWidth: 3,
-                              fill: colors[i % colors.length]
+                            labelStyle={{
+                              color: '#000000',
+                              fontWeight: 700,
+                              marginBottom: '4px'
+                            }}
+                            itemStyle={{
+                              color: '#000000',
+                              fontWeight: 600
                             }}
                           />
-                        ))}
-                      </LineChart>
-                    </ResponsiveContainer>
+                          <Legend
+                            wrapperStyle={{
+                              fontWeight: 700,
+                              paddingTop: '16px'
+                            }}
+                            iconType="rect"
+                          />
+                          {comparison.userNames.map((name, i) => (
+                            <Line
+                              key={name}
+                              type="monotone"
+                              dataKey={name}
+                              stroke="#000000"
+                              strokeWidth={3}
+                              dot={{
+                                fill: colors[i % colors.length],
+                                stroke: '#000000',
+                                strokeWidth: 2,
+                                r: 5
+                              }}
+                              activeDot={{
+                                r: 7,
+                                stroke: '#000000',
+                                strokeWidth: 2,
+                                fill: colors[i % colors.length]
+                              }}
+                            />
+                          ))}
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
-                </Card>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
-      {/* Modals */}
-      {showCreateModal && (
-        <CreateGroupModal
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            setShowCreateModal(false);
-            loadGroup();
-          }}
-        />
-      )}
+        {/* Modals */}
+        {showCreateModal && (
+          <CreateGroupModal
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={() => {
+              setShowCreateModal(false);
+              loadGroup();
+            }}
+          />
+        )}
 
-      {showJoinModal && (
-        <JoinGroupModal
-          onClose={() => setShowJoinModal(false)}
-          onSuccess={() => {
-            setShowJoinModal(false);
-            loadGroup();
-          }}
-        />
-      )}
+        {showJoinModal && (
+          <JoinGroupModal
+            onClose={() => setShowJoinModal(false)}
+            onSuccess={() => {
+              setShowJoinModal(false);
+              loadGroup();
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };

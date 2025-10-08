@@ -44,16 +44,18 @@ export const FeedbackPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-black text-black mb-3">
-          Your Feedback Matters! 💭
-        </h1>
-        <p className="text-lg text-neutral-600">
-          Help us improve Progress2Win by sharing your experience
-        </p>
-      </div>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-3xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-black p-8 shadow-neo">
+            <h1 className="text-4xl font-black text-black mb-3">
+              Your Feedback Matters! 💭
+            </h1>
+            <p className="text-lg text-neutral-700">
+              Help us improve Progress2Win by sharing your experience
+            </p>
+          </div>
 
       {/* Success message */}
       {submitted && (
@@ -172,16 +174,18 @@ export const FeedbackPage: React.FC = () => {
         </div>
       </form>
 
-      {/* Info box */}
-      <div className="mt-8 p-6 bg-secondary-50 border-2 border-secondary-700 shadow-neo">
-        <h3 className="font-bold text-secondary-900 mb-2">
-          Pourquoi votre avis est important ?
-        </h3>
-        <ul className="text-sm text-secondary-800 space-y-1">
-          <li>✅ Nous lisons chaque feedback attentivement</li>
-          <li>✅ Vos suggestions influencent nos priorités de développement</li>
-          <li>✅ Vous nous aidez à créer la meilleure app de fitness possible</li>
-        </ul>
+          {/* Info box */}
+          <div className="p-6 bg-secondary-50 border-2 border-secondary-700 shadow-neo">
+            <h3 className="font-bold text-secondary-900 mb-2">
+              Pourquoi votre avis est important ?
+            </h3>
+            <ul className="text-sm text-secondary-800 space-y-1">
+              <li>✅ Nous lisons chaque feedback attentivement</li>
+              <li>✅ Vos suggestions influencent nos priorités de développement</li>
+              <li>✅ Vous nous aidez à créer la meilleure app de fitness possible</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
