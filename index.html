@@ -29,9 +29,279 @@
     <!-- Additional SEO -->
     <meta name="theme-color" content="#e54dff" />
     <link rel="canonical" href="https://progress2win.com" />
+
+    <!-- Critical CSS for initial render -->
+    <style>
+      /* SEO content styling - visible during load, Google-friendly */
+      #landing-seo-content {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        line-height: 1.6;
+        background: #fafafa;
+      }
+
+      #landing-seo-content.loaded {
+        display: none;
+      }
+
+      #landing-seo-content h1 {
+        font-size: 2rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+      }
+
+      #landing-seo-content h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 2rem 0 1rem;
+        color: #2a2a2a;
+        border-bottom: 2px solid #e5e5e5;
+        padding-bottom: 0.5rem;
+      }
+
+      #landing-seo-content h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 1rem 0 0.5rem;
+        color: #3a3a3a;
+      }
+
+      #landing-seo-content p {
+        margin: 0.8rem 0;
+        color: #4a4a4a;
+      }
+
+      #landing-seo-content ul, #landing-seo-content ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+        color: #4a4a4a;
+      }
+
+      #landing-seo-content li {
+        margin: 0.5rem 0;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .feature-item {
+        padding: 1rem;
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+      }
+
+      #landing-seo-content footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e5e5e5;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* Loading overlay - appears over SEO content */
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+
+      #loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader {
+        width: 60px;
+        height: 60px;
+        border: 6px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fbbf24;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .loading-text {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin-top: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      .loading-subtext {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      /* Hide root until React loads */
+      #root:empty {
+        display: none;
+      }
+    </style>
   </head>
   <body>
+    <!-- SEO-friendly static content (visible to everyone, Google-friendly) -->
+    <div id="landing-seo-content">
+      <header>
+        <h1>🏋️ Progress2Win - Application de Suivi Fitness Gratuite</h1>
+        <p><strong>Suivez vos progrès de perte de poids et d'exercices</strong> avec Progress2Win, l'application de fitness 100% gratuite. Enregistrez vos tractions, pompes, squats et bien plus encore !</p>
+      </header>
+
+      <main>
+        <section>
+          <h2>Fonctionnalités Principales</h2>
+          <div class="feature-grid">
+            <article class="feature-item">
+              <h3>📊 Suivi Complet des Progrès</h3>
+              <p>Enregistrez tous vos exercices quotidiens : <strong>tractions (pull-ups)</strong>, <strong>pompes (push-ups)</strong>, <strong>squats</strong>, course à pied, et plus encore. Visualisez votre évolution avec des graphiques détaillés et des statistiques complètes.</p>
+            </article>
+
+            <article class="feature-item">
+              <h3>⚖️ Gestion du Poids et Perte de Poids</h3>
+              <p>Suivez votre <strong>poids corporel</strong> et vos <strong>mesures</strong> régulièrement. Définissez des objectifs de perte de poids réalistes et atteignez-les progressivement avec un suivi quotidien.</p>
+            </article>
+
+            <article class="feature-item">
+              <h3>🎯 Objectifs Personnalisés</h3>
+              <p>Créez des <strong>objectifs fitness</strong> adaptés à votre niveau et vos ambitions. Suivez votre progression vers chaque objectif avec des indicateurs visuels clairs.</p>
+            </article>
+
+            <article class="feature-item">
+              <h3>👥 Comparaison avec Amis</h3>
+              <p>Rejoignez des <strong>groupes fitness</strong>, comparez vos performances avec vos amis et restez motivé en relevant des défis ensemble. Le <strong>classement</strong> vous permet de vous situer par rapport aux autres.</p>
+            </article>
+
+            <article class="feature-item">
+              <h3>📈 Graphiques et Statistiques</h3>
+              <p>Visualisez vos données avec des <strong>graphiques interactifs</strong>. Analysez votre progression semaine par semaine, mois par mois.</p>
+            </article>
+
+            <article class="feature-item">
+              <h3>🔔 Rappels et Notifications</h3>
+              <p>Recevez des <strong>notifications</strong> pour ne jamais oublier d'enregistrer vos séances. Restez motivé avec des rappels personnalisés.</p>
+            </article>
+          </div>
+        </section>
+
+        <section>
+          <h2>Pourquoi Choisir Progress2Win ?</h2>
+          <ul>
+            <li>✅ <strong>100% Gratuit</strong> - Aucun abonnement, aucun frais caché</li>
+            <li>✅ <strong>Interface Moderne</strong> - Design neobrutalism unique et intuitif</li>
+            <li>✅ <strong>Suivi Illimité</strong> - Enregistrez autant d'exercices que vous voulez</li>
+            <li>✅ <strong>Graphiques Détaillés</strong> - Visualisation claire de votre progression</li>
+            <li>✅ <strong>Multi-plateforme</strong> - Disponible sur web et application desktop</li>
+            <li>✅ <strong>Données Sécurisées</strong> - Vos informations sont protégées</li>
+            <li>✅ <strong>Comparaison Sociale</strong> - Restez motivé avec vos amis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Exercices et Métriques Supportés</h2>
+          <p>Progress2Win vous permet de suivre une grande variété d'exercices et de métriques fitness :</p>
+          <ul>
+            <li><strong>Tractions (Pull-ups)</strong> - Suivez le nombre de répétitions et votre progression</li>
+            <li><strong>Pompes (Push-ups)</strong> - Enregistrez vos séries quotidiennes</li>
+            <li><strong>Squats</strong> - Comptabilisez vos répétitions</li>
+            <li><strong>Course à pied</strong> - Distance, durée, vitesse</li>
+            <li><strong>Cyclisme</strong> - Kilomètres parcourus</li>
+            <li><strong>Poids corporel</strong> - Suivi quotidien de votre poids</li>
+            <li><strong>Mesures corporelles</strong> - Tour de taille, biceps, etc.</li>
+            <li><strong>Cardio</strong> - Fréquence cardiaque, calories brûlées</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Comment Commencer ?</h2>
+          <p>Rejoindre Progress2Win est simple et rapide :</p>
+          <ol>
+            <li>Créez votre compte gratuit en quelques secondes</li>
+            <li>Définissez vos premiers objectifs fitness</li>
+            <li>Commencez à enregistrer vos exercices quotidiens</li>
+            <li>Suivez votre progression avec les graphiques</li>
+            <li>Invitez vos amis pour rester motivé ensemble</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Application Fitness Gratuite et Complète</h2>
+          <p>Progress2Win est bien plus qu'un simple compteur d'exercices. C'est un <strong>écosystème complet</strong> pour suivre votre transformation physique, que votre objectif soit la <strong>perte de poids</strong>, le <strong>gain de muscle</strong>, ou simplement rester en forme.</p>
+          <p>Notre application vous accompagne dans votre parcours fitness avec des outils professionnels accessibles à tous, gratuitement.</p>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2024 Progress2Win - Application de Suivi Fitness Gratuite</p>
+        <p>Mots-clés : suivi fitness, perte de poids, tractions, pompes, squats, application fitness gratuite, musculation, exercices, progression sportive</p>
+      </footer>
+    </div>
+
+    <!-- Loading overlay (covers SEO content during load) -->
+    <div id="loading-overlay">
+      <div class="loader"></div>
+      <div class="loading-text">Progress2Win</div>
+      <div class="loading-subtext">Chargement de ton espace fitness...</div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      // Hide loading overlay and SEO content once React has loaded
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const root = document.getElementById('root');
+          const loadingOverlay = document.getElementById('loading-overlay');
+          const seoContent = document.getElementById('landing-seo-content');
+
+          if (root && root.children.length > 0) {
+            // Hide loading overlay with animation
+            if (loadingOverlay) {
+              loadingOverlay.classList.add('hidden');
+              setTimeout(function() {
+                if (loadingOverlay.parentNode) {
+                  loadingOverlay.parentNode.removeChild(loadingOverlay);
+                }
+              }, 300);
+            }
+
+            // Hide SEO content once React has rendered
+            if (seoContent) {
+              seoContent.classList.add('loaded');
+            }
+          }
+        }, 100);
+      });
+
+      // Fallback: hide loading overlay after 5 seconds
+      setTimeout(function() {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
+      }, 5000);
+    </script>
   </body>
 </html>
