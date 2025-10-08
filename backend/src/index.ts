@@ -13,6 +13,7 @@ import notificationsRoutes from './routes/notifications.js';
 import subscriptionsRoutes from './routes/subscriptions.js';
 import settingsRoutes from './routes/settings.js';
 import groupsRoutes from './routes/groups.js';
+import feedbackRoutes from './routes/feedback.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:1420',
+    'https://tauri.localhost',
     process.env.CORS_ORIGIN || ''
   ].filter(Boolean),
   credentials: true,
@@ -65,6 +67,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/groups', groupsRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // 404 handler
 app.use((req, res) => {
